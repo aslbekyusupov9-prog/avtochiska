@@ -1,0 +1,152 @@
+:root {
+  --ink: #08090b;
+  --ink-card: rgba(18, 20, 26, 0.7);
+  --ivory: #F8F7F4;
+  --ivory-dim: #A1A3A8;
+  --grey: #6E727A;
+  --lime: #C8FF3D;
+  --lime-glow: rgba(200, 255, 61, 0.35);
+  --gold: #D4AF37;
+  --steel: #7FA0FF;
+  --line: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-bg: rgba(255, 255, 255, 0.035);
+  --blur: blur(20px) saturate(160%);
+  --r: 20px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--ink);
+  color: var(--ivory);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  overflow-x: hidden;
+  position: relative;
+  background: radial-gradient(circle at 10% 10%, rgba(200, 255, 61, 0.08), transparent 45%),
+              radial-gradient(circle at 90% 30%, rgba(127, 160, 255, 0.07), transparent 50%),
+              radial-gradient(circle at 50% 90%, rgba(212, 175, 55, 0.06), transparent 55%);
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: "Big Shoulders Display", Impact, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.font-serif {
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+.font-mono {
+  font-family: "IBM Plex Mono", monospace;
+}
+
+/* Glassmorphism utility */
+.glass-card {
+  background: var(--ink-card);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #d4ff5e, #a6ee00);
+  color: #08090b;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 16px 32px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 30px -10px var(--lime-glow);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px -10px rgba(200, 255, 61, 0.6);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ivory);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 16px 32px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  backdrop-filter: var(--blur);
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--lime);
+  color: var(--lime);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--ink);
+}
+::-webkit-scrollbar-thumb {
+  background: #1e222b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--lime);
+}
+
+/* RESPONSIVE MEDIA QUERIES FOR MOBILE AND TABLETS */
+@media (max-width: 900px) {
+  .desktop-nav {
+    display: none !important;
+  }
+
+  .mobile-toggle {
+    display: block !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .btn-primary, .btn-secondary {
+    padding: 14px 22px;
+    font-size: 11px;
+    width: 100%;
+  }
+
+  .glass-card {
+    padding: 20px !important;
+    border-radius: 16px;
+  }
+}
