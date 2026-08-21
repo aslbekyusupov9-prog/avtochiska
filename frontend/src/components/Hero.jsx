@@ -86,7 +86,7 @@ export default function Hero({ heroContent }) {
 
           {/* After image (Clean interior) */}
           <img
-            src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=1000"
+            src={data.heroAfterImg || "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=1000"}
             alt="Tozalangan salon"
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
           />
@@ -101,7 +101,7 @@ export default function Hero({ heroContent }) {
             pointerEvents: 'none'
           }}>
             <img
-              src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1000"
+              src={data.heroBeforeImg || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1000"}
               alt="Iflos salon"
               style={{ width: '1000px', height: '420px', objectFit: 'cover', maxWidth: 'none' }}
             />

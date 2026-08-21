@@ -330,6 +330,98 @@ export default function AdminModal({
                   <label style={labelStyle}>TAFSIF MATNI</label>
                   <textarea value={heroDraft.description || ''} onChange={e => setHeroDraft({ ...heroDraft, description: e.target.value })} style={{ ...inputStyle, minHeight: '80px' }} />
                 </div>
+
+                {/* Hero Before & After Image controls */}
+                <div style={{ padding: '16px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <h5 className="font-display" style={{ color: 'var(--lime)', fontSize: '16px' }}>INTERAKTIV SLAYDER RASMLARI (OLDIN & KEYIN)</h5>
+                  
+                  <div>
+                    <label style={labelStyle}>"OLDIN" RASMI (QURILMADAN TANLANG YOKI URL KIRITING)</label>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '6px' }}>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        id="heroFileBefore" 
+                        style={{ display: 'none' }}
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                              const img = new Image();
+                              img.onload = () => {
+                                const canvas = document.createElement('canvas');
+                                canvas.width = 1000;
+                                canvas.height = 600;
+                                const ctx = canvas.getContext('2d');
+                                const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+                                const x = (canvas.width / 2) - (img.width / 2) * scale;
+                                const y = (canvas.height / 2) - (img.height / 2) * scale;
+                                ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                                setHeroDraft({ ...heroDraft, heroBeforeImg: canvas.toDataURL('image/jpeg', 0.8) });
+                              };
+                              img.src = ev.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                      <label htmlFor="heroFileBefore" className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px', cursor: 'pointer' }}>
+                        📁 Qurilmadan rasm
+                      </label>
+                      <input 
+                        placeholder="Yoki URL manzil" 
+                        value={heroDraft.heroBeforeImg || ''} 
+                        onChange={e => setHeroDraft({ ...heroDraft, heroBeforeImg: e.target.value })} 
+                        style={{ ...inputStyle, flex: 1 }} 
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>"KEYIN" RASMI (QURILMADAN TANLANG YOKI URL KIRITING)</label>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '6px' }}>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        id="heroFileAfter" 
+                        style={{ display: 'none' }}
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                              const img = new Image();
+                              img.onload = () => {
+                                const canvas = document.createElement('canvas');
+                                canvas.width = 1000;
+                                canvas.height = 600;
+                                const ctx = canvas.getContext('2d');
+                                const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+                                const x = (canvas.width / 2) - (img.width / 2) * scale;
+                                const y = (canvas.height / 2) - (img.height / 2) * scale;
+                                ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                                setHeroDraft({ ...heroDraft, heroAfterImg: canvas.toDataURL('image/jpeg', 0.8) });
+                              };
+                              img.src = ev.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                      <label htmlFor="heroFileAfter" className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px', cursor: 'pointer' }}>
+                        📁 Qurilmadan rasm
+                      </label>
+                      <input 
+                        placeholder="Yoki URL manzil" 
+                        value={heroDraft.heroAfterImg || ''} 
+                        onChange={e => setHeroDraft({ ...heroDraft, heroAfterImg: e.target.value })} 
+                        style={{ ...inputStyle, flex: 1 }} 
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <button onClick={saveHeroChanges} className="btn-primary" style={{ marginTop: '10px' }}>
                   <CheckCircle2 size={16} /> HERO SAQLASH
                 </button>
