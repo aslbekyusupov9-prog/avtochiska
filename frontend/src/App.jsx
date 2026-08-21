@@ -204,9 +204,9 @@ export default function App() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
             {gallery.map((g) => (
               <motion.div whileHover={{ y: -8 }} transition={{ duration: 0.3 }} key={g.id} className="glass-card" style={{ padding: '16px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', height: '220px', borderRadius: '14px', overflow: 'hidden' }}>
-                  <img src={g.before} alt="Before" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  <img src={g.after} alt="After" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', height: '240px', borderRadius: '14px', overflow: 'hidden', background: 'rgba(0,0,0,0.4)' }}>
+                  <img src={g.before} alt="Before" style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#090a0f' }} />
+                  <img src={g.after} alt="After" style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#090a0f' }} />
                 </div>
                 <h4 className="font-display" style={{ fontSize: '20px', marginTop: '16px' }}>{g.title}</h4>
               </motion.div>
