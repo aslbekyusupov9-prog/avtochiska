@@ -123,7 +123,7 @@ export const INITIAL_SITE_INFO = {
   phone2: "+998 71 200 11 22",
   address: "Xorazm viloyati, Yangibozor tumani, G'afurgulom ko'chasi",
   workingHours: "Har kuni: 09:00 – 20:00",
-  telegramToken: "8925592658:AAGYwLXwNrqawhwHVJ-L5A70O1i4bXq_CbQ",
+  telegramToken: import.meta.env.VITE_TELEGRAM_BOT_TOKEN || "8925592658:AAGYwLXwNrqawhwHVJ-L5A70O1i4bXq_CbQ",
   telegramChatId: "",
   telegramUrl: "https://t.me/tozalik_ustasi",
   instagramUrl: "https://www.instagram.com/tozalik.ustasi/"
