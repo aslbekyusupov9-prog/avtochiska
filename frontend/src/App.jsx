@@ -222,19 +222,14 @@ export default function App() {
           viewport={{ once: true, margin: '-100px' }}
           variants={sectionVariants}
           style={{ padding: '80px 20px', maxWidth: '1240px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px', flexWrap: 'wrap', gap: '20px' }}>
-            <div>
-              <span className="font-mono" style={{ fontSize: '11px', color: 'var(--lime)', letterSpacing: '0.25em' }}>(05) SHARHLAR</span>
-              <h2 className="font-display" style={{ fontSize: 'clamp(36px, 6vw, 64px)', marginTop: '8px' }}>
-                MIJOZLARIMIZ <span style={{ color: 'var(--lime)' }}>FIKRI</span>
-              </h2>
-            </div>
-            <a href="#yangi-sharh" className="btn-secondary" style={{ textDecoration: 'none', fontSize: '11px' }}>
-              ✍️ Izoh qoldirish
-            </a>
+          <div style={{ marginBottom: '40px' }}>
+            <span className="font-mono" style={{ fontSize: '11px', color: 'var(--lime)', letterSpacing: '0.25em' }}>(05) SHARHLAR</span>
+            <h2 className="font-display" style={{ fontSize: 'clamp(36px, 6vw, 64px)', marginTop: '8px' }}>
+              MIJOZLARIMIZ <span style={{ color: 'var(--lime)' }}>FIKRI</span>
+            </h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginBottom: '48px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
             {reviews.map((rev) => (
               <motion.div whileHover={{ y: -6 }} key={rev.id} className="glass-card" style={{ padding: '32px' }}>
                 <div style={{ display: 'flex', gap: '4px', color: 'var(--lime)', marginBottom: '12px' }}>
@@ -249,62 +244,6 @@ export default function App() {
                 </div>
               </motion.div>
             ))}
-          </div>
-
-          {/* User Add Review Card Form */}
-          <div id="yangi-sharh" className="glass-card" style={{ padding: 'clamp(24px, 4vw, 40px)', border: '1px solid var(--lime-glow)' }}>
-            <h3 className="font-display" style={{ fontSize: '28px', marginBottom: '8px' }}>SIZ HAM O'Z FIKRINGIZNI QOLDIRING</h3>
-            <p style={{ color: 'var(--ivory-dim)', fontSize: '14px', marginBottom: '24px' }}>
-              Xizmatimizdan foydalandingizmi? Fikringiz biz uchun juda muhim!
-            </p>
-
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const form = e.target;
-              const author = form.author.value.trim();
-              const car = form.car.value.trim();
-              const comment = form.comment.value.trim();
-              const rating = Number(form.rating.value) || 5;
-
-              if (author && comment) {
-                handleAddReview({
-                  id: 'r' + Date.now(),
-                  author,
-                  car: car || 'Chevrolet',
-                  rating,
-                  comment,
-                  date: 'Bugun'
-                });
-                form.reset();
-                alert("Fikringiz uchun rahmat! Sharhingiz e'lon qilindi.");
-              }
-            }} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-                <div>
-                  <label className="font-mono" style={{ fontSize: '11px', color: 'var(--grey)', display: 'block', marginBottom: '6px' }}>ISMINGIZ *</label>
-                  <input name="author" required placeholder="Ali Valiyev" style={{ width: '100%', padding: '14px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', color: 'var(--ivory)' }} />
-                </div>
-                <div>
-                  <label className="font-mono" style={{ fontSize: '11px', color: 'var(--grey)', display: 'block', marginBottom: '6px' }}>MASHINANGIZ MODELI</label>
-                  <input name="car" placeholder="Cobalt, Gentra, Malibu..." style={{ width: '100%', padding: '14px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', color: 'var(--ivory)' }} />
-                </div>
-                <div>
-                  <label className="font-mono" style={{ fontSize: '11px', color: 'var(--grey)', display: 'block', marginBottom: '6px' }}>BAHO (BAHO QO'YING)</label>
-                  <select name="rating" style={{ width: '100%', padding: '14px', borderRadius: '12px', background: 'var(--ink)', border: '1px solid var(--glass-border)', color: 'var(--ivory)' }}>
-                    <option value="5">⭐⭐⭐⭐⭐ (5 - A'lo)</option>
-                    <option value="4">⭐⭐⭐⭐ (4 - Yaxshi)</option>
-                    <option value="3">⭐⭐⭐ (3 - Qoniqarli)</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="font-mono" style={{ fontSize: '11px', color: 'var(--grey)', display: 'block', marginBottom: '6px' }}>IZOHINGIZ *</label>
-                <textarea name="comment" required placeholder="Xizmat sifati haqidagi fikringiz..." style={{ width: '100%', padding: '14px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', color: 'var(--ivory)', minHeight: '90px', resize: 'vertical' }}></textarea>
-              </div>
-              <button type="submit" className="btn-primary" style={{ alignSelf: 'flex-start' }}>
-                SHARH YUBORISH 🚀
-              </button>
-            </form>
           </div>
         </motion.section>
 
