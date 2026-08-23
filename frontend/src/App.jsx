@@ -151,7 +151,7 @@ export default function App() {
         <Hero heroContent={heroContent} />
 
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-100px' }} variants={sectionVariants}>
-          <ServicesAndCalculator services={services} onSelectCalculatorDeal={(deal) => setCalculatorDeal(deal)} />
+          <ServicesAndCalculator services={services} carTypes={carTypes} onSelectCalculatorDeal={(deal) => setCalculatorDeal(deal)} />
         </motion.div>
 
         {/* Gallery Archive */}
