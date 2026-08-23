@@ -171,9 +171,15 @@ export default function App() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
             {gallery.map((g) => (
               <motion.div whileHover={{ y: -8 }} transition={{ duration: 0.3 }} key={g.id} className="glass-card" style={{ padding: '16px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', height: '240px', borderRadius: '14px', overflow: 'hidden', background: 'rgba(0,0,0,0.4)' }}>
-                  <img src={g.before} alt="Before" style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#090a0f' }} />
-                  <img src={g.after} alt="After" style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#090a0f' }} />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', height: '240px', borderRadius: '14px', overflow: 'hidden', background: 'rgba(0,0,0,0.4)', position: 'relative' }}>
+                  <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                    <img src={g.before} alt="Before" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <span style={{ position: 'absolute', bottom: '8px', left: '8px', background: 'rgba(0,0,0,0.75)', color: 'var(--ivory)', fontSize: '10px', padding: '3px 8px', borderRadius: '6px', fontFamily: 'IBM Plex Mono', border: '1px solid rgba(255,255,255,0.1)' }}>OLDIN</span>
+                  </div>
+                  <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                    <img src={g.after} alt="After" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <span style={{ position: 'absolute', bottom: '8px', right: '8px', background: 'var(--lime)', color: '#000', fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px', fontFamily: 'IBM Plex Mono' }}>KEYIN</span>
+                  </div>
                 </div>
                 <h4 className="font-display" style={{ fontSize: '20px', marginTop: '16px' }}>{g.title}</h4>
               </motion.div>

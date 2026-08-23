@@ -4,22 +4,28 @@ import { Calculator, CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function ServicesAndCalculator({ services = INITIAL_SERVICES, carTypes = INITIAL_CAR_TYPES, onSelectCalculatorDeal }) {
   const activeCarTypes = (carTypes && carTypes.length > 0) ? carTypes : INITIAL_CAR_TYPES;
-  const [selectedCar, setSelectedCar] = useState(activeCarTypes[0]);
+  const carTypeOptions = [
+    { id: 'all_cars', name: '📌 Barcha mashina turlari', multiplier: 1.0 },
+    ...activeCarTypes
+  ];
+
+  const [selectedCar, setSelectedCar] = useState(carTypeOptions[0]);
 
   // Keep selectedCar updated if carTypes change
   React.useEffect(() => {
-    if (activeCarTypes && activeCarTypes.length > 0) {
+    if (carTypeOptions && carTypeOptions.length > 0) {
       setSelectedCar(prev => {
-        const found = activeCarTypes.find(ct => ct.id === prev?.id);
-        return found || activeCarTypes[0];
+        const found = carTypeOptions.find(ct => ct.id === prev?.id);
+        return found || carTypeOptions[0];
       });
     }
   }, [carTypes]);
 
   // Filter services specific to selected car section
-  const availableServices = services.filter(svc => 
-    !svc.carTypeId || svc.carTypeId === 'all' || svc.carTypeId === selectedCar?.id
-  );
+  const availableServices = services.filter(svc => {
+    if (selectedCar?.id === 'all_cars') return true;
+    return !svc.carTypeId || svc.carTypeId === 'all' || svc.carTypeId === selectedCar?.id;
+  });
 
   const [selectedServices, setSelectedServices] = useState([]);
 
@@ -68,7 +74,7 @@ export default function ServicesAndCalculator({ services = INITIAL_SERVICES, car
               1. MASHINA TURINI TANLANG
             </label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {activeCarTypes.map((type) => (
+              {carTypeOptions.map((type) => (
                 <button
                   key={type.id}
                   onClick={() => setSelectedCar(type)}
