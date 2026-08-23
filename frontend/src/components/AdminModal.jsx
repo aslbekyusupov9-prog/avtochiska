@@ -116,8 +116,9 @@ export default function AdminModal({
   const handleAddGalItem = (e) => {
     e.preventDefault();
     if (!gTitle || !gBefore || !gAfter) return;
-    onAddGallery({ id: 'g' + Date.now(), title: gTitle, before: gBefore, after: gAfter });
+    onAddGallery({ id: 'g_' + Date.now(), title: gTitle, before: gBefore, after: gAfter });
     setGTitle(''); setGBefore(''); setGAfter('');
+    setTimeout(() => handleSaveAll(), 200);
   };
 
   // Dashboard calculations
@@ -731,6 +732,7 @@ export default function AdminModal({
                           e.preventDefault();
                           e.stopPropagation();
                           onDeleteGallery(g.id);
+                          setTimeout(() => handleSaveAll(), 200);
                         }} 
                         style={{ padding: '6px 12px', width: '100%', borderRadius: '8px', background: 'rgba(255,110,110,0.15)', border: '1px solid #ff6e6e', color: '#ff9e9e', fontSize: '11px', cursor: 'pointer' }}>
                         O'chirish
