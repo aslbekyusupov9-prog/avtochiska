@@ -178,7 +178,9 @@ export default function Hero({ heroContent }) {
               <Award size={24} />
               <span className="font-mono" style={{ fontSize: '11px', letterSpacing: '0.2em' }}>TAJRIBA</span>
             </div>
-            <h3 className="font-serif" style={{ fontSize: '48px', fontWeight: 400, marginTop: '8px' }}>{data.stat2Value || "40+"}</h3>
+            <h3 className="font-serif" style={{ fontSize: '48px', fontWeight: 400, marginTop: '8px' }}>
+              {(!data.stat2Value || data.stat2Value === "4,200+") ? "40+" : data.stat2Value}
+            </h3>
             <p style={{ color: 'var(--ivory-dim)', fontSize: '14px' }}>{data.stat2Label || "Muvaffaqiyatli tozalangan avtomobillar soni."}</p>
           </div>
         </div>

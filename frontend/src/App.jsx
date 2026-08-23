@@ -33,7 +33,16 @@ export default function App() {
 
   const [heroContent, setHeroContent] = useState(() => {
     const saved = localStorage.getItem('af_react_hero_v3');
-    return saved ? JSON.parse(saved) : INITIAL_HERO;
+    if (!saved) return INITIAL_HERO;
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed.stat2Value === "4,200+") {
+        parsed.stat2Value = "40+";
+      }
+      return parsed;
+    } catch {
+      return INITIAL_HERO;
+    }
   });
 
   const [siteInfo, setSiteInfo] = useState(() => {
@@ -62,7 +71,11 @@ export default function App() {
     if (Array.isArray(remote.gallery)) setGallery(remote.gallery);
     if (Array.isArray(remote.reviews)) setReviews(remote.reviews);
     if (remote.heroContent && typeof remote.heroContent === 'object' && Object.keys(remote.heroContent).length > 0) {
-      setHeroContent(remote.heroContent);
+      const updatedHero = { ...remote.heroContent };
+      if (updatedHero.stat2Value === "4,200+") {
+        updatedHero.stat2Value = "40+";
+      }
+      setHeroContent(updatedHero);
     }
     if (remote.siteInfo && typeof remote.siteInfo === 'object' && Object.keys(remote.siteInfo).length > 0) {
       const updatedSiteInfo = { ...remote.siteInfo };
