@@ -37,6 +37,24 @@ body {
               radial-gradient(circle at 50% 90%, rgba(212, 175, 55, 0.06), transparent 55%);
 }
 
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 550px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 h1, h2, h3, h4, .font-display {
   font-family: "Big Shoulders Display", Impact, sans-serif;
   text-transform: uppercase;
