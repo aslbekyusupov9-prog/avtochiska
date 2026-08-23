@@ -160,20 +160,6 @@ export default function Hero({ heroContent }) {
             ◀▶
           </div>
 
-          {/* Clickable Quick Action Buttons for Phones */}
-          <button
-            onClick={(e) => { e.stopPropagation(); setSliderPos(100); }}
-            style={{ position: 'absolute', top: 20, left: 20, zIndex: 12, cursor: 'pointer' }}
-            className="btn-secondary">
-            OLDIN (100%)
-          </button>
-
-          <button
-            onClick={(e) => { e.stopPropagation(); setSliderPos(0); }}
-            style={{ position: 'absolute', top: 20, right: 20, background: 'var(--lime)', color: '#000', zIndex: 12, cursor: 'pointer' }}
-            className="btn-secondary">
-            KEYIN (100%)
-          </button>
         </div>
 
         {/* Stats card */}
