@@ -47,23 +47,24 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
         console.log("[Telegram Debug] Sending notification...", { botToken, targetChatId });
 
         if (targetChatId) {
-          const text = `🚗 *YANGI BUYURTMA! (Tozalik Ustasi)*\n\n` +
-            `👤 *Ism:* ${formData.name}\n` +
-            `📞 *Tel:* ${formData.phone}\n` +
-            `🚘 *Mashina:* ${formData.car}\n` +
-            `🧼 *Xizmat:* ${calculatorDeal ? calculatorDeal.services : formData.service}\n` +
-            (calculatorDeal ? `💰 *Kalkulyator Hisobi:* ${Number(calculatorDeal.totalPrice).toLocaleString()} so'm (${calculatorDeal.carType})\n` : '') +
-            `📅 *Sana:* ${formData.date}\n` +
-            `📝 *Izoh:* ${formData.note || "Yo'q"}\n` +
-            `🆔 *ID:* \`${orderId}\``;
+          const numericChatId = Number(String(targetChatId).replace(/\D/g, ''));
+          const text = `🚗 <b>YANGI BUYURTMA! (Tozalik Ustasi)</b>\n\n` +
+            `👤 <b>Ism:</b> ${formData.name}\n` +
+            `📞 <b>Tel:</b> ${formData.phone}\n` +
+            `🚘 <b>Mashina:</b> ${formData.car}\n` +
+            `🧼 <b>Xizmat:</b> ${calculatorDeal ? calculatorDeal.services : formData.service}\n` +
+            (calculatorDeal ? `💰 <b>Kalkulyator Hisobi:</b> ${Number(calculatorDeal.totalPrice).toLocaleString()} so'm (${calculatorDeal.carType})\n` : '') +
+            `📅 <b>Sana:</b> ${formData.date}\n` +
+            `📝 <b>Izoh:</b> ${formData.note || "Yo'q"}\n` +
+            `🆔 <b>ID:</b> <code>${orderId}</code>`;
 
           const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              chat_id: targetChatId,
+              chat_id: numericChatId,
               text: text,
-              parse_mode: 'Markdown'
+              parse_mode: 'HTML'
             })
           });
 
