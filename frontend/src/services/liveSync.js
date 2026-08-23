@@ -17,7 +17,13 @@ const syncChannel =
  * @returns {Promise<Object|null>}
  */
 export async function fetchLiveCloudState() {
-  if (!supabase) return null;
+  let backup = null;
+  try {
+    const rawBackup = sessionStorage.getItem('af_live_backup_v1');
+    if (rawBackup) backup = JSON.parse(rawBackup);
+  } catch (_) {}
+
+  if (!supabase) return backup;
 
   try {
     const { data, error } = await supabase
@@ -26,26 +32,29 @@ export async function fetchLiveCloudState() {
       .eq('id', ROW_ID)
       .single();
 
-    if (error) {
-      console.error('[liveSync] fetchLiveCloudState error:', error.message);
-      return null;
+    if (error || !data) {
+      if (error) console.error('[liveSync] fetchLiveCloudState error:', error.message);
+      return backup;
     }
 
-    if (!data) return null;
+    const fetchedCarTypes = (Array.isArray(data.car_types) && data.car_types.length > 0)
+      ? data.car_types
+      : (Array.isArray(data.site_info?.carTypes) ? data.site_info.carTypes : []);
 
-    // snake_case → camelCase
-    return {
-      orders: data.orders ?? [],
-      gallery: data.gallery ?? [],
-      services: data.services ?? [],
-      carTypes: data.car_types ?? [],
-      reviews: data.reviews ?? [],
-      heroContent: data.hero_content ?? {},
-      siteInfo: data.site_info ?? {},
+    const result = {
+      orders: data.orders ?? backup?.orders ?? [],
+      gallery: data.gallery ?? backup?.gallery ?? [],
+      services: (Array.isArray(data.services) && data.services.length > 0) ? data.services : (backup?.services ?? []),
+      carTypes: (Array.isArray(fetchedCarTypes) && fetchedCarTypes.length > 0) ? fetchedCarTypes : (backup?.carTypes ?? []),
+      reviews: data.reviews ?? backup?.reviews ?? [],
+      heroContent: data.hero_content ?? backup?.heroContent ?? {},
+      siteInfo: data.site_info ?? backup?.siteInfo ?? {},
     };
+
+    return result;
   } catch (err) {
     console.error('[liveSync] fetchLiveCloudState exception:', err);
-    return null;
+    return backup;
   }
 }
 
@@ -54,32 +63,53 @@ export async function fetchLiveCloudState() {
  * @param {Object} data
  */
 export async function saveLiveCloudState(data) {
-  // Avval tab'larni BroadcastChannel orqali xabardor qilish
+  // Avval tab'larni BroadcastChannel va sessionStorage orqali xabardor qilish
   if (syncChannel) {
     try {
       syncChannel.postMessage({ type: 'SYNC_STATE', payload: data });
     } catch (_) {}
   }
 
+  try {
+    sessionStorage.setItem('af_live_backup_v1', JSON.stringify(data));
+  } catch (_) {}
+
   if (!supabase) return;
 
-  try {
-    const { error } = await supabase.from(TABLE).upsert(
-      {
-        id: ROW_ID,
-        orders: data.orders ?? [],
-        gallery: data.gallery ?? [],
-        services: data.services ?? [],
-        car_types: data.carTypes ?? [],
-        reviews: data.reviews ?? [],
-        hero_content: data.heroContent ?? {},
-        site_info: data.siteInfo ?? {},
-      },
-      { onConflict: 'id' }
-    );
+  const siteInfoWithCarTypes = {
+    ...(data.siteInfo || {}),
+    carTypes: data.carTypes || []
+  };
 
+  const payloadPrimary = {
+    id: ROW_ID,
+    orders: data.orders ?? [],
+    gallery: data.gallery ?? [],
+    services: data.services ?? [],
+    car_types: data.carTypes ?? [],
+    reviews: data.reviews ?? [],
+    hero_content: data.heroContent ?? {},
+    site_info: siteInfoWithCarTypes,
+  };
+
+  const payloadFallback = {
+    id: ROW_ID,
+    orders: data.orders ?? [],
+    gallery: data.gallery ?? [],
+    services: data.services ?? [],
+    reviews: data.reviews ?? [],
+    hero_content: data.heroContent ?? {},
+    site_info: siteInfoWithCarTypes,
+  };
+
+  try {
+    const { error } = await supabase.from(TABLE).upsert(payloadPrimary, { onConflict: 'id' });
     if (error) {
-      console.error('[liveSync] saveLiveCloudState error:', error.message);
+      console.warn('[liveSync] Retrying with fallback schema due to:', error.message);
+      const { error: fallbackErr } = await supabase.from(TABLE).upsert(payloadFallback, { onConflict: 'id' });
+      if (fallbackErr) {
+        console.error('[liveSync] saveLiveCloudState fallback error:', fallbackErr.message);
+      }
     }
   } catch (err) {
     console.error('[liveSync] saveLiveCloudState exception:', err);
