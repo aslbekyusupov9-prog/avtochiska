@@ -42,27 +42,7 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
     const botToken = telegramToken || "8925592658:AAGYwLXwNrqawhwHVJ-L5A70O1i4bXq_CbQ";
     if (botToken) {
       try {
-        let targetChatId = telegramChatId || localStorage.getItem('af_chat_id') || "7338450259";
-        
-        // If Chat ID is not set yet, attempt to fetch automatically from bot updates
-        if (!targetChatId) {
-          const updatesRes = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates`);
-          const updatesData = await updatesRes.json();
-          if (updatesData.ok && updatesData.result && updatesData.result.length > 0) {
-            const lastUpdate = updatesData.result[updatesData.result.length - 1];
-            targetChatId = lastUpdate.message?.chat?.id || lastUpdate.channel_post?.chat?.id;
-            if (targetChatId) {
-              localStorage.setItem('af_chat_id', targetChatId);
-              // Save Chat ID to cloud so it works for all other users/browsers globally
-              if (onUpdateSiteInfo && siteInfo) {
-                onUpdateSiteInfo({
-                  ...siteInfo,
-                  telegramChatId: String(targetChatId)
-                });
-              }
-            }
-          }
-        }
+        const targetChatId = telegramChatId || "7338450259";
 
         console.log("[Telegram Debug] Sending notification...", { botToken, targetChatId });
 
