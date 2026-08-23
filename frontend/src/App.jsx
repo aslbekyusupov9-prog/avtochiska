@@ -147,6 +147,7 @@ export default function App() {
   const handleDeleteGallery = (id) => setGallery(gallery.filter(g => g.id !== id));
 
   const handleAddService = (svc) => setServices([...services, svc]);
+  const handleUpdateService = (id, updatedFields) => setServices(services.map(s => s.id === id ? { ...s, ...updatedFields } : s));
   const handleDeleteService = (id) => setServices(services.filter(s => s.id !== id));
   const handleResetServices = () => setServices(INITIAL_SERVICES);
 
@@ -339,6 +340,7 @@ export default function App() {
         onDeleteReview={handleDeleteReview}
         services={services}
         onAddService={handleAddService}
+        onUpdateService={handleUpdateService}
         onDeleteService={handleDeleteService}
         onResetServices={handleResetServices}
         carTypes={carTypes}

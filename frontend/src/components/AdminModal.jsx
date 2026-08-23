@@ -15,6 +15,7 @@ export default function AdminModal({
   onDeleteReview,
   services = [],
   onAddService,
+  onUpdateService,
   onDeleteService,
   onResetServices,
   carTypes = [],
@@ -560,29 +561,39 @@ export default function AdminModal({
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {services.map(svc => {
-                    const assignedType = carTypes.find(c => c.id === svc.carTypeId);
                     return (
-                      <div key={svc.id} style={{ padding: '16px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div key={svc.id} style={{ padding: '16px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
                         <div>
                           <h5 style={{ fontSize: '16px' }}>{svc.number}. {svc.name}</h5>
-                          <p style={{ color: 'var(--lime)', fontSize: '14px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                            <span>{Number(svc.basePrice).toLocaleString()} so'm</span>
-                            <span style={{ color: 'var(--ivory-dim)', fontSize: '12px' }}>
-                              {assignedType ? `🚗 ${assignedType.name}` : "📌 Barcha turlar"}
-                            </span>
-                          </p>
+                          <p style={{ color: 'var(--lime)', fontSize: '14px', margin: '4px 0' }}>{Number(svc.basePrice).toLocaleString()} so'm</p>
                         </div>
-                        <button 
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            onDeleteService(svc.id);
-                            setTimeout(() => handleSaveAll(), 100);
-                          }} 
-                          style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(255,110,110,0.15)', border: '1px solid #ff6e6e', color: '#ff9e9e', cursor: 'pointer' }}>
-                          <Trash2 size={16} />
-                        </button>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <select
+                            value={svc.carTypeId || 'all'}
+                            onChange={(e) => {
+                              if (onUpdateService) {
+                                onUpdateService(svc.id, { carTypeId: e.target.value });
+                                setTimeout(() => handleSaveAll(), 100);
+                              }
+                            }}
+                            style={{ ...inputStyle, width: 'auto', padding: '6px 12px', background: '#12141a', color: 'var(--lime)', border: '1px solid var(--lime-glow)' }}>
+                            <option value="all">📌 Barcha turlar uchun</option>
+                            {carTypes.map(ct => (
+                              <option key={ct.id} value={ct.id}>🚗 Faqat {ct.name} uchun</option>
+                            ))}
+                          </select>
+                          <button 
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              onDeleteService(svc.id);
+                              setTimeout(() => handleSaveAll(), 100);
+                            }} 
+                            style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(255,110,110,0.15)', border: '1px solid #ff6e6e', color: '#ff9e9e', cursor: 'pointer' }}>
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </div>
                     );
                   })}

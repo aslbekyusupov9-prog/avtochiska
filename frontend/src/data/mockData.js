@@ -2,56 +2,56 @@ export const INITIAL_SERVICES = [
   {
     id: 's1',
     number: '01',
-    name: "O'rindiqlar ximchistkasi",
-    description: "Sidenya chexol Almashtirish",
+    name: "Sedan o'rindiqlar ximchistkasi",
+    description: "Sedan va hetchbeklar uchun maxsus o'rindiqlarni chuqur tozalash.",
     basePrice: 80000,
-    tag: 'Eng mashhur',
-    carTypeId: 'all'
+    tag: 'Sedan uchun',
+    carTypeId: 'sedan'
   },
   {
     id: 's2',
     number: '02',
-    name: "To'liq salon",
-    description: "Shift, gilam, panel, eshik qoplamalari va bagaj — salonning har bir santimetri.",
+    name: "To'liq salon (Kompleks)",
+    description: "Shift, gilam, panel, eshik qoplamalari va bagaj — barcha mashinalar uchun.",
     basePrice: 500000,
-    tag: 'Tavsiya etiladi',
+    tag: 'Barcha turlar',
     carTypeId: 'all'
   },
   {
     id: 's3',
     number: '03',
-    name: "Mator chiska",
-    description: "Mator Ximchistka",
-    basePrice: 100000,
-    tag: 'Gigiyena',
-    carTypeId: 'all'
+    name: "Crossover Mator & Qoplamalar chiska",
+    description: "Krossover va kichik SUV matori va ostki qismlarini bug'li tozalash.",
+    basePrice: 150000,
+    tag: 'Crossover uchun',
+    carTypeId: 'crossover'
   },
   {
     id: 's4',
     number: '04',
-    name: "Sidenya ximchistka",
-    description: "Sidenya ximchistka",
-    basePrice: 200000,
-    tag: 'Mashhur',
-    carTypeId: 'all'
+    name: "SUV 7 o'rindiqli to'liq ximchistka",
+    description: "Katta SUV va Minivanlar uchun uch qatorli salonni chuqur tozalash.",
+    basePrice: 650000,
+    tag: 'SUV uchun',
+    carTypeId: 'suv'
   },
   {
     id: 's5',
     number: '05',
-    name: "Obshivka Ximchistka",
-    description: "Obshivka Ximchistka",
+    name: "Obshivka & Eshik qoplamalari",
+    description: "Eshik obshivkalari va plastik qismlarni ximchistka qilish.",
     basePrice: 100000,
-    tag: 'Sifatli',
-    carTypeId: 'all'
+    tag: 'Sedan/Crossover',
+    carTypeId: 'sedan'
   },
   {
     id: 's6',
     number: '06',
-    name: "Shift Patalok ximchistka",
-    description: "shift patalok",
-    basePrice: 100000,
-    tag: 'Sifatli',
-    carTypeId: 'all'
+    name: "Shift & Patalok ximchistka",
+    description: "SUV va Krossoverlar shift qismini dog'lardan tozalash.",
+    basePrice: 180000,
+    tag: 'SUV/Crossover',
+    carTypeId: 'crossover'
   },
 ];
 
