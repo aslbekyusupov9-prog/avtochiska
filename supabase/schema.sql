@@ -16,6 +16,9 @@ CREATE TABLE IF NOT EXISTS site_data (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Mavjud jadvalga car_types ustunini qo'shish (agar bo'lmasa)
+ALTER TABLE site_data ADD COLUMN IF NOT EXISTS car_types JSONB NOT NULL DEFAULT '[]'::jsonb;
+
 -- 2. Realtime uchun REPLICA IDENTITY
 ALTER TABLE site_data REPLICA IDENTITY FULL;
 
