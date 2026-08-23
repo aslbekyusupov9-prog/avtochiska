@@ -241,6 +241,8 @@ export default function App() {
             telegramToken={siteInfo.telegramToken}
             telegramChatId={siteInfo.telegramChatId}
             calculatorDeal={calculatorDeal}
+            onUpdateSiteInfo={setSiteInfo}
+            siteInfo={siteInfo}
           />
         </motion.div>
       </main>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Send, CheckCircle2, Phone, Calendar, Car, User, FileText, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, calculatorDeal }) {
+export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, calculatorDeal, onUpdateSiteInfo, siteInfo }) {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -52,6 +52,13 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
             targetChatId = lastUpdate.message?.chat?.id || lastUpdate.channel_post?.chat?.id;
             if (targetChatId) {
               localStorage.setItem('af_chat_id', targetChatId);
+              // Save Chat ID to cloud so it works for all other users/browsers globally
+              if (onUpdateSiteInfo && siteInfo) {
+                onUpdateSiteInfo({
+                  ...siteInfo,
+                  telegramChatId: String(targetChatId)
+                });
+              }
             }
           }
         }
