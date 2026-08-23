@@ -38,7 +38,16 @@ export default function App() {
 
   const [siteInfo, setSiteInfo] = useState(() => {
     const saved = localStorage.getItem('af_react_siteinfo_v3');
-    return saved ? JSON.parse(saved) : INITIAL_SITE_INFO;
+    if (!saved) return INITIAL_SITE_INFO;
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed.phone2 === "+998 71 200 11 22") {
+        parsed.phone2 = "+998 33 779 80 80";
+      }
+      return parsed;
+    } catch {
+      return INITIAL_SITE_INFO;
+    }
   });
 
   const [adminOpen, setAdminOpen] = useState(false);
@@ -56,7 +65,11 @@ export default function App() {
       setHeroContent(remote.heroContent);
     }
     if (remote.siteInfo && typeof remote.siteInfo === 'object' && Object.keys(remote.siteInfo).length > 0) {
-      setSiteInfo(remote.siteInfo);
+      const updatedSiteInfo = { ...remote.siteInfo };
+      if (updatedSiteInfo.phone2 === "+998 71 200 11 22") {
+        updatedSiteInfo.phone2 = "+998 33 779 80 80";
+      }
+      setSiteInfo(updatedSiteInfo);
     }
     if (Array.isArray(remote.orders)) setOrders(remote.orders);
   };
@@ -273,8 +286,8 @@ export default function App() {
             <div>
               <h5 className="font-mono" style={{ fontSize: '12px', color: 'var(--grey)', letterSpacing: '0.2em', marginBottom: '16px' }}>ALOQA</h5>
               <p className="font-mono" style={{ color: 'var(--ivory)', fontSize: '14px', lineHeight: 1.8 }}>
-                {siteInfo.phone1}<br />
-                {siteInfo.phone2}
+                {siteInfo.phone1}
+                {siteInfo.phone2 && siteInfo.phone2 !== siteInfo.phone1 && <><br />{siteInfo.phone2}</>}
               </p>
             </div>
           </div>

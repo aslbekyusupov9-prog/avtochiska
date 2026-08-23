@@ -45,6 +45,14 @@ export default function AdminModal({
   const [heroDraft, setHeroDraft] = useState(heroContent);
   const [siteDraft, setSiteDraft] = useState(siteInfo);
 
+  React.useEffect(() => {
+    setHeroDraft(heroContent);
+  }, [heroContent]);
+
+  React.useEffect(() => {
+    setSiteDraft(siteInfo);
+  }, [siteInfo]);
+
   if (!isOpen) return null;
 
   const handleLogin = (e) => {
