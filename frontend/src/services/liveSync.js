@@ -106,8 +106,9 @@ export function subscribeToTabSync(callback) {
 
   // 2. Supabase Realtime (boshqa qurilmalar uchun)
   if (supabase) {
+    const channelName = `site_data_realtime_${Date.now()}`;
     const channel = supabase
-      .channel('site_data_realtime')
+      .channel(channelName)
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: TABLE, filter: `id=eq.${ROW_ID}` },
