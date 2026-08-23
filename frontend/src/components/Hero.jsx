@@ -59,8 +59,8 @@ export default function Hero({ heroContent }) {
 
       {/* Touch & Clickable Interactive Before/After Hero Visual */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.4 }}
         style={{ marginTop: '50px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
 
@@ -82,14 +82,25 @@ export default function Hero({ heroContent }) {
             border: '1px solid var(--glass-border)',
             userSelect: 'none',
             touchAction: 'none',
-            background: '#090a0f'
+            background: '#090a0f',
+            transform: 'translateZ(0)'
           }}>
 
           {/* After image (Clean interior) */}
           <img
             src={data.heroAfterImg || "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=1000"}
             alt="Tozalangan salon"
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center',
+              pointerEvents: 'none',
+              transition: 'none',
+              transform: 'translateZ(0)'
+            }}
           />
 
           {/* Before image clipped (Dirty interior - motionless static reveal) */}
@@ -102,8 +113,13 @@ export default function Hero({ heroContent }) {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
+              objectPosition: 'center',
               pointerEvents: 'none',
-              clipPath: `inset(0 ${100 - sliderPos}% 0 0)`
+              transition: 'none',
+              transform: 'translateZ(0)',
+              willChange: 'clip-path',
+              clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)`,
+              WebkitClipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)`
             }}
           />
 
@@ -120,8 +136,6 @@ export default function Hero({ heroContent }) {
             zIndex: 3,
             boxShadow: '0 0 12px rgba(200, 255, 61, 0.6)'
           }} />
-
-          {/* Touch Draggable Central Handle Circle */}
 
           {/* Touch Draggable Central Handle Circle */}
           <div style={{
