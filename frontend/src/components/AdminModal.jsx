@@ -768,7 +768,7 @@ export default function AdminModal({
                         <h5 style={{ fontSize: '15px' }}>{r.author} <span style={{ color: 'var(--grey)', fontSize: '12px' }}>({r.car})</span></h5>
                         <p style={{ color: 'var(--ivory-dim)', fontSize: '13px', marginTop: '4px' }}>"{r.comment}"</p>
                       </div>
-                      <button type="button" onClick={() => onDeleteReview(r.id)} style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(255,110,110,0.15)', border: '1px solid #ff6e6e', color: '#ff9e9e', cursor: 'pointer' }}>
+                      <button type="button" onClick={() => { onDeleteReview(r.id); setTimeout(() => handleSaveAll(), 200); }} style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(255,110,110,0.15)', border: '1px solid #ff6e6e', color: '#ff9e9e', cursor: 'pointer' }}>
                         <Trash2 size={16} />
                       </button>
                     </div>

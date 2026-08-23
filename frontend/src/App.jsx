@@ -20,6 +20,10 @@ export default function App() {
   const [siteInfo, setSiteInfo] = useState(INITIAL_SITE_INFO);
 
   const [adminOpen, setAdminOpen] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewSuccess, setReviewSuccess] = useState(false);
+  const [userRev, setUserRev] = useState({ author: '', car: '', rating: 5, comment: '' });
+
   const [isLoaded, setIsLoaded] = useState(false);
   const [isCloudLoading, setIsCloudLoading] = useState(true);
 
@@ -186,6 +190,15 @@ export default function App() {
       saveLiveCloudState({ orders, gallery, services, carTypes, reviews: updated, heroContent, siteInfo });
       return updated;
     });
+
+    if (siteInfo.telegramToken && siteInfo.telegramChatId) {
+      const text = `💬 *YANGI SHARH (IZOH) KELDI*\n\n👤 *Muallif:* ${rev.author}\n🚗 *Avto:* ${rev.car || 'Ko\'rsatilmadi'}\n⭐ *Baho:* ${'⭐'.repeat(rev.rating || 5)}\n💬 *Sharh:* ${rev.comment}`;
+      fetch(`https://api.telegram.org/bot${siteInfo.telegramToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: siteInfo.telegramChatId, text, parse_mode: 'Markdown' })
+      }).catch(() => {});
+    }
   };
 
   const handleDeleteReview = (id) => {
@@ -290,12 +303,26 @@ export default function App() {
           viewport={{ once: true, margin: '-100px' }}
           variants={sectionVariants}
           style={{ padding: '80px 20px', maxWidth: '1240px', margin: '0 auto' }}>
-          <div style={{ marginBottom: '40px' }}>
-            <span className="font-mono" style={{ fontSize: '11px', color: 'var(--lime)', letterSpacing: '0.25em' }}>(05) SHARHLAR</span>
-            <h2 className="font-display" style={{ fontSize: 'clamp(36px, 6vw, 64px)', marginTop: '8px' }}>
-              MIJOZLARIMIZ <span style={{ color: 'var(--lime)' }}>FIKRI</span>
-            </h2>
+          <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+            <div>
+              <span className="font-mono" style={{ fontSize: '11px', color: 'var(--lime)', letterSpacing: '0.25em' }}>(05) SHARHLAR</span>
+              <h2 className="font-display" style={{ fontSize: 'clamp(36px, 6vw, 64px)', marginTop: '8px' }}>
+                MIJOZLARIMIZ <span style={{ color: 'var(--lime)' }}>FIKRI</span>
+              </h2>
+            </div>
+            <button
+              onClick={() => setShowReviewModal(true)}
+              className="btn-primary"
+              style={{ padding: '12px 22px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              ✍️ SHARH (IZOH) QOLDIRISH
+            </button>
           </div>
+
+          {reviewSuccess && (
+            <div style={{ padding: '16px 20px', borderRadius: '12px', background: 'rgba(200, 255, 61, 0.15)', border: '1px solid var(--lime)', color: 'var(--lime)', fontSize: '14px', marginBottom: '24px', fontWeight: 600 }}>
+              ✓ Rahmat! Sharhingiz muvaffaqiyatli saqlandi va saytga qo'shildi!
+            </div>
+          )}
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
             {reviews.map((rev) => (
@@ -314,6 +341,64 @@ export default function App() {
             ))}
           </div>
         </motion.section>
+
+        {/* Public Review Submission Modal */}
+        {showReviewModal && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(12px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+            <div style={{ background: '#12141a', border: '1px solid var(--glass-border)', borderRadius: '20px', padding: '32px', maxWidth: '480px', width: '100%', position: 'relative' }}>
+              <button
+                onClick={() => setShowReviewModal(false)}
+                style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', color: '#fff', fontSize: '22px', cursor: 'pointer' }}>
+                ✕
+              </button>
+              <h3 className="font-display" style={{ fontSize: '26px', color: 'var(--lime)', marginBottom: '6px' }}>SHARH QOLDIRISH</h3>
+              <p style={{ color: 'var(--ivory-dim)', fontSize: '13px', marginBottom: '20px' }}>Xizmat ko'rsatish sifatimiz haqidagi fikringizni yozib qoldiring!</p>
+              
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                if (!userRev.author || !userRev.comment) return;
+                handleAddReview({
+                  id: 'r_' + Date.now(),
+                  author: userRev.author,
+                  car: userRev.car || 'Mijoz',
+                  rating: Number(userRev.rating),
+                  comment: userRev.comment,
+                  date: 'Bugun'
+                });
+                setUserRev({ author: '', car: '', rating: 5, comment: '' });
+                setShowReviewModal(false);
+                setReviewSuccess(true);
+                setTimeout(() => setReviewSuccess(false), 5000);
+              }} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div>
+                  <label style={{ fontSize: '11px', color: 'var(--lime)', letterSpacing: '0.1em', fontWeight: 600 }}>ISMINGIZ *</label>
+                  <input required placeholder="Masalan: Sardor" value={userRev.author} onChange={e => setUserRev({...userRev, author: e.target.value})} style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: '#fff', marginTop: '4px', outline: 'none' }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: '11px', color: 'var(--lime)', letterSpacing: '0.1em', fontWeight: 600 }}>MASHINANGIZ MODELI (IXTIYORIY)</label>
+                  <input placeholder="Masalan: Cobalt" value={userRev.car} onChange={e => setUserRev({...userRev, car: e.target.value})} style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: '#fff', marginTop: '4px', outline: 'none' }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: '11px', color: 'var(--lime)', letterSpacing: '0.1em', fontWeight: 600 }}>BAHO (RATING)</label>
+                  <select value={userRev.rating} onChange={e => setUserRev({...userRev, rating: Number(e.target.value)})} style={{ width: '100%', padding: '12px', background: '#181a20', border: '1px solid var(--glass-border)', borderRadius: '8px', color: '#fff', marginTop: '4px', outline: 'none' }}>
+                    <option value={5}>⭐⭐⭐⭐⭐ (5/5) — A'lo xizmat</option>
+                    <option value={4}>⭐⭐⭐⭐ (4/5) — Yaxshi</option>
+                    <option value={3}>⭐⭐⭐ (3/5) — Qoniqarli</option>
+                    <option value={2}>⭐⭐ (2/5) — O'rtacha</option>
+                    <option value={1}>⭐ (1/5) — Yomon</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: '11px', color: 'var(--lime)', letterSpacing: '0.1em', fontWeight: 600 }}>SHARHINGIZ MATNI *</label>
+                  <textarea required placeholder="Xizmat ko'rsatish darajasi haqida fikringiz..." value={userRev.comment} onChange={e => setUserRev({...userRev, comment: e.target.value})} style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: '#fff', marginTop: '4px', minHeight: '80px', outline: 'none' }} />
+                </div>
+                <button type="submit" className="btn-primary" style={{ padding: '14px', fontSize: '12px', marginTop: '8px', justifyContent: 'center' }}>
+                  SHARHNI E'LON QILISH ✨
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
 
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-100px' }} variants={sectionVariants}>
           <OrderForm
