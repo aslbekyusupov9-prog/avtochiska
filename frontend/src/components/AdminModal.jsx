@@ -60,7 +60,7 @@ export default function AdminModal({
     if (password === 'admin123' || password === 'admin') {
       setIsAuthenticated(true);
     } else {
-      alert("Parol noto'g'ri! (Parol: admin123)");
+      alert("Parol noto'g'ri!");
     }
   };
 
@@ -177,7 +177,7 @@ export default function AdminModal({
             </div>
 
             <div>
-              <label style={labelStyle}>PAROL (Standart: admin123)</label>
+              <label style={labelStyle}>PAROL</label>
               <input 
                 type="password" 
                 placeholder="Parolni kiriting..."
