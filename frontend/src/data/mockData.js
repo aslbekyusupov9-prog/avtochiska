@@ -5,7 +5,8 @@ export const INITIAL_SERVICES = [
     name: "O'rindiqlar ximchistkasi",
     description: "Sidenya chexol Almashtirish",
     basePrice: 80000,
-    tag: 'Eng mashhur'
+    tag: 'Eng mashhur',
+    carTypeId: 'all'
   },
   {
     id: 's2',
@@ -13,7 +14,8 @@ export const INITIAL_SERVICES = [
     name: "To'liq salon",
     description: "Shift, gilam, panel, eshik qoplamalari va bagaj — salonning har bir santimetri.",
     basePrice: 500000,
-    tag: 'Tavsiya etiladi'
+    tag: 'Tavsiya etiladi',
+    carTypeId: 'all'
   },
   {
     id: 's3',
@@ -21,7 +23,8 @@ export const INITIAL_SERVICES = [
     name: "Mator chiska",
     description: "Mator Ximchistka",
     basePrice: 100000,
-    tag: 'Gigiyena'
+    tag: 'Gigiyena',
+    carTypeId: 'all'
   },
   {
     id: 's4',
@@ -29,7 +32,8 @@ export const INITIAL_SERVICES = [
     name: "Sidenya ximchistka",
     description: "Sidenya ximchistka",
     basePrice: 200000,
-    tag: 'Mashhur'
+    tag: 'Mashhur',
+    carTypeId: 'all'
   },
   {
     id: 's5',
@@ -37,7 +41,8 @@ export const INITIAL_SERVICES = [
     name: "Obshivka Ximchistka",
     description: "Obshivka Ximchistka",
     basePrice: 100000,
-    tag: 'Sifatli'
+    tag: 'Sifatli',
+    carTypeId: 'all'
   },
   {
     id: 's6',
@@ -45,11 +50,18 @@ export const INITIAL_SERVICES = [
     name: "Shift Patalok ximchistka",
     description: "shift patalok",
     basePrice: 100000,
-    tag: 'Sifatli'
+    tag: 'Sifatli',
+    carTypeId: 'all'
   },
 ];
 
 export const CAR_TYPES = [
+  { id: 'sedan', name: 'Sedan / Hatchback', multiplier: 1.0, icon: 'Car' },
+  { id: 'crossover', name: 'Crossover / Kichik SUV', multiplier: 1.2, icon: 'Truck' },
+  { id: 'suv', name: 'Katta SUV / Minivan', multiplier: 1.4, icon: 'ShieldAlert' }
+];
+
+export const INITIAL_CAR_TYPES = [
   { id: 'sedan', name: 'Sedan / Hatchback', multiplier: 1.0, icon: 'Car' },
   { id: 'crossover', name: 'Crossover / Kichik SUV', multiplier: 1.2, icon: 'Truck' },
   { id: 'suv', name: 'Katta SUV / Minivan', multiplier: 1.4, icon: 'ShieldAlert' }

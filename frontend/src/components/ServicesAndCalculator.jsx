@@ -1,10 +1,39 @@
 import React, { useState } from 'react';
-import { CAR_TYPES, INITIAL_SERVICES } from '../data/mockData';
+import { CAR_TYPES as INITIAL_CAR_TYPES, INITIAL_SERVICES } from '../data/mockData';
 import { Calculator, CheckCircle2, ArrowRight } from 'lucide-react';
 
-export default function ServicesAndCalculator({ services = INITIAL_SERVICES, onSelectCalculatorDeal }) {
-  const [selectedCar, setSelectedCar] = useState(CAR_TYPES[0]);
-  const [selectedServices, setSelectedServices] = useState(services.length ? [services[0].id] : []);
+export default function ServicesAndCalculator({ services = INITIAL_SERVICES, carTypes = INITIAL_CAR_TYPES, onSelectCalculatorDeal }) {
+  const activeCarTypes = (carTypes && carTypes.length > 0) ? carTypes : INITIAL_CAR_TYPES;
+  const [selectedCar, setSelectedCar] = useState(activeCarTypes[0]);
+
+  // Keep selectedCar updated if carTypes change
+  React.useEffect(() => {
+    if (activeCarTypes && activeCarTypes.length > 0) {
+      setSelectedCar(prev => {
+        const found = activeCarTypes.find(ct => ct.id === prev?.id);
+        return found || activeCarTypes[0];
+      });
+    }
+  }, [carTypes]);
+
+  // Filter services specific to selected car section
+  const availableServices = services.filter(svc => 
+    !svc.carTypeId || svc.carTypeId === 'all' || svc.carTypeId === selectedCar?.id
+  );
+
+  const [selectedServices, setSelectedServices] = useState([]);
+
+  React.useEffect(() => {
+    if (availableServices && availableServices.length > 0) {
+      setSelectedServices(prev => {
+        const validPrev = prev.filter(id => availableServices.some(s => s.id === id));
+        if (validPrev.length > 0) return validPrev;
+        return [availableServices[0].id];
+      });
+    } else {
+      setSelectedServices([]);
+    }
+  }, [selectedCar?.id, services]);
 
   const toggleService = (id) => {
     if (selectedServices.includes(id)) {
@@ -14,20 +43,8 @@ export default function ServicesAndCalculator({ services = INITIAL_SERVICES, onS
     }
   };
 
-  React.useEffect(() => {
-    if (services && services.length > 0) {
-      setSelectedServices(prev => {
-        const validPrev = prev.filter(id => services.some(s => s.id === id));
-        if (validPrev.length > 0) return validPrev;
-        return [services[0].id];
-      });
-    } else {
-      setSelectedServices([]);
-    }
-  }, [services]);
-
   const calculateTotal = () => {
-    const baseSum = services
+    const baseSum = availableServices
       .filter(s => selectedServices.includes(s.id))
       .reduce((acc, curr) => acc + (Number(curr.basePrice) || 0), 0);
     return Math.round(baseSum * (selectedCar?.multiplier || 1));
@@ -51,26 +68,26 @@ export default function ServicesAndCalculator({ services = INITIAL_SERVICES, onS
               1. MASHINA TURINI TANLANG
             </label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {CAR_TYPES.map((type) => (
+              {activeCarTypes.map((type) => (
                 <button
                   key={type.id}
                   onClick={() => setSelectedCar(type)}
                   style={{
                     padding: '16px 20px',
                     borderRadius: '14px',
-                    background: selectedCar.id === type.id ? 'rgba(200, 255, 61, 0.12)' : 'rgba(255, 255, 255, 0.02)',
-                    border: `1px solid ${selectedCar.id === type.id ? 'var(--lime)' : 'var(--glass-border)'}`,
-                    color: selectedCar.id === type.id ? 'var(--lime)' : 'var(--ivory)',
+                    background: selectedCar?.id === type.id ? 'rgba(200, 255, 61, 0.12)' : 'rgba(255, 255, 255, 0.02)',
+                    border: `1px solid ${selectedCar?.id === type.id ? 'var(--lime)' : 'var(--glass-border)'}`,
+                    color: selectedCar?.id === type.id ? 'var(--lime)' : 'var(--ivory)',
                     textAlign: 'left',
                     cursor: 'pointer',
                     display: 'flex',
-                    justify: 'space-between',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
                     fontFamily: 'Plus Jakarta Sans',
                     fontSize: '15px'
                   }}>
                   <span>{type.name}</span>
-                  {selectedCar.id === type.id && <CheckCircle2 size={18} color="var(--lime)" />}
+                  {selectedCar?.id === type.id && <CheckCircle2 size={18} color="var(--lime)" />}
                 </button>
               ))}
             </div>
@@ -79,35 +96,41 @@ export default function ServicesAndCalculator({ services = INITIAL_SERVICES, onS
           {/* Step 2: Services Selection */}
           <div>
             <label className="font-mono" style={{ fontSize: '11px', color: 'var(--grey)', letterSpacing: '0.2em', display: 'block', marginBottom: '16px' }}>
-              2. KERAKLI XIZMATLARNI BELGILANG
+              2. {selectedCar?.name || "TANLANGAN MASHINA"} UCHUN XIZMATLAR ({availableServices.length})
             </label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {services.map((svc) => {
-                const isChecked = selectedServices.includes(svc.id);
-                return (
-                  <button
-                    key={svc.id}
-                    onClick={() => toggleService(svc.id)}
-                    style={{
-                      padding: '14px 20px',
-                      borderRadius: '14px',
-                      background: isChecked ? 'rgba(200, 255, 61, 0.08)' : 'rgba(255, 255, 255, 0.02)',
-                      border: `1px solid ${isChecked ? 'var(--lime)' : 'var(--glass-border)'}`,
-                      color: 'var(--ivory)',
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      fontSize: '14px'
-                    }}>
-                    <span>{svc.name}</span>
-                    <span className="font-mono" style={{ color: isChecked ? 'var(--lime)' : 'var(--ivory-dim)', fontSize: '13px' }}>
-                      +{(svc.basePrice * selectedCar.multiplier).toLocaleString()} so'm
-                    </span>
-                  </button>
-                );
-              })}
+              {availableServices.length === 0 ? (
+                <p style={{ color: 'var(--ivory-dim)', fontSize: '13px', fontStyle: 'italic' }}>
+                  Ushbu tur uchun alohida xizmatlar hali qo'shilmagan.
+                </p>
+              ) : (
+                availableServices.map((svc) => {
+                  const isChecked = selectedServices.includes(svc.id);
+                  return (
+                    <button
+                      key={svc.id}
+                      onClick={() => toggleService(svc.id)}
+                      style={{
+                        padding: '14px 20px',
+                        borderRadius: '14px',
+                        background: isChecked ? 'rgba(200, 255, 61, 0.08)' : 'rgba(255, 255, 255, 0.02)',
+                        border: `1px solid ${isChecked ? 'var(--lime)' : 'var(--glass-border)'}`,
+                        color: 'var(--ivory)',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        fontSize: '14px'
+                      }}>
+                      <span>{svc.name}</span>
+                      <span className="font-mono" style={{ color: isChecked ? 'var(--lime)' : 'var(--ivory-dim)', fontSize: '13px' }}>
+                        +{(svc.basePrice * (selectedCar?.multiplier || 1)).toLocaleString()} so'm
+                      </span>
+                    </button>
+                  );
+                })
+              )}
             </div>
           </div>
 

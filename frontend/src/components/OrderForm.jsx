@@ -18,7 +18,7 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
     e.preventDefault();
     setStatus({ type: '', msg: '' });
 
-    if (!formData.name || !formData.phone || !formData.car || !formData.date) {
+    if (!formData.name || !formData.phone || !formData.date) {
       setStatus({ type: 'err', msg: "Iltimos, yulduzcha (*) bilan belgilangan barcha maydonlarni to'ldiring." });
       return;
     }
@@ -218,10 +218,10 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
               <div>
-                <label className="font-mono" style={labelStyle}>AVTOMOBIL MODELI *</label>
+                <label className="font-mono" style={labelStyle}>AVTOMOBIL MODELI (IXTIYORIY)</label>
                 <input
                   type="text"
-                  placeholder="Chevrolet Cobalt, Malibu..."
+                  placeholder="Chevrolet Cobalt, Malibu (ixtiyoriy)..."
                   value={formData.car}
                   onChange={(e) => setFormData({ ...formData, car: e.target.value })}
                   style={inputStyle}

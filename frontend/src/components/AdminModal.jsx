@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, LayoutDashboard, ShoppingBag, Image as ImageIcon, Star, Settings, Plus, Trash2, CheckCircle2, Shield, Wrench } from 'lucide-react';
+import { X, LayoutDashboard, ShoppingBag, Image as ImageIcon, Star, Settings, Plus, Trash2, CheckCircle2, Shield, Wrench, Car } from 'lucide-react';
 
 export default function AdminModal({
   isOpen,
@@ -17,6 +17,10 @@ export default function AdminModal({
   onAddService,
   onDeleteService,
   onResetServices,
+  carTypes = [],
+  onAddCarType,
+  onDeleteCarType,
+  onResetCarTypes,
   onForceSaveCloud,
   heroContent = {},
   onUpdateHero,
@@ -37,7 +41,8 @@ export default function AdminModal({
   };
 
   // Form states
-  const [newSvc, setNewSvc] = useState({ number: '05', name: '', description: '', basePrice: 300000, tag: 'Yangi' });
+  const [newSvc, setNewSvc] = useState({ number: '07', name: '', description: '', basePrice: 200000, tag: 'Yangi', carTypeId: 'all' });
+  const [newCarType, setNewCarType] = useState({ name: '', multiplier: 1.0 });
   const [newRev, setNewRev] = useState({ author: '', car: '', rating: 5, comment: '', date: 'Bugun' });
   const [gTitle, setGTitle] = useState('');
   const [gBefore, setGBefore] = useState('');
@@ -74,11 +79,22 @@ export default function AdminModal({
     setTimeout(() => handleSaveAll(), 100);
   };
 
+  const handleCreateCarType = (e) => {
+    e.preventDefault();
+    if (!newCarType.name) return;
+    const id = 'ct_' + Date.now();
+    if (onAddCarType) {
+      onAddCarType({ id, name: newCarType.name, multiplier: Number(newCarType.multiplier) || 1.0 });
+    }
+    setNewCarType({ name: '', multiplier: 1.0 });
+    setTimeout(() => handleSaveAll(), 100);
+  };
+
   const handleCreateService = (e) => {
     e.preventDefault();
     if (!newSvc.name || !newSvc.basePrice) return;
-    onAddService({ ...newSvc, id: 's' + Date.now(), basePrice: Number(newSvc.basePrice) });
-    setNewSvc({ number: '05', name: '', description: '', basePrice: 300000, tag: 'Yangi' });
+    onAddService({ ...newSvc, id: 's' + Date.now(), basePrice: Number(newSvc.basePrice), carTypeId: newSvc.carTypeId || 'all' });
+    setNewSvc({ number: '07', name: '', description: '', basePrice: 200000, tag: 'Yangi', carTypeId: 'all' });
     setTimeout(() => handleSaveAll(), 100);
   };
 
@@ -200,6 +216,7 @@ export default function AdminModal({
               {[
                 { id: 'stats', label: 'DASHBOARD STATS', icon: LayoutDashboard },
                 { id: 'orders', label: `BUYURTMALAR (${orders.length})`, icon: ShoppingBag },
+                { id: 'cartypes', label: `MASHINA TURLARI (${carTypes.length})`, icon: Car },
                 { id: 'hero', label: "HERO BO'LIMI", icon: Wrench },
                 { id: 'services', label: `XIZMATLAR (${services.length})`, icon: Wrench },
                 { id: 'gallery', label: `GALEREYA (${gallery.length})`, icon: ImageIcon },
@@ -436,6 +453,73 @@ export default function AdminModal({
               </div>
             )}
 
+            {/* TAB: EDIT CAR TYPES */}
+            {activeTab === 'cartypes' && (
+              <div>
+                <h4 className="font-display" style={{ fontSize: '22px', marginBottom: '16px' }}>YANGI MASHINA TURI QO'SHISH</h4>
+                <form onSubmit={handleCreateCarType} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '28px', padding: '16px', background: 'rgba(255,255,255,0.02)', borderRadius: '14px' }}>
+                  <div>
+                    <label style={labelStyle}>MASHINA TURI NOMI *</label>
+                    <input placeholder="Masalan: Gruzovoy / Pikap" value={newCarType.name} onChange={e => setNewCarType({ ...newCarType, name: e.target.value })} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>NARX KOEFFITSIENTI (MULTIPLIER) *</label>
+                    <input placeholder="1.0, 1.2, 1.5..." type="number" step="0.05" value={newCarType.multiplier} onChange={e => setNewCarType({ ...newCarType, multiplier: e.target.value })} style={inputStyle} />
+                  </div>
+                  <button type="submit" className="btn-primary" style={{ padding: '10px', fontSize: '11px', gridColumn: '1/-1', marginTop: '6px' }}>
+                    <Plus size={14} /> Mashina turini qo'shish
+                  </button>
+                </form>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h4 className="font-display" style={{ fontSize: '22px', margin: 0 }}>MAVJUD MASHINA TURLARI</h4>
+                  {onResetCarTypes && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (window.confirm("Barcha mashina turlarini standart holatga qaytarishni xohlaysizmi?")) {
+                          onResetCarTypes();
+                        }
+                      }}
+                      style={{ padding: '8px 14px', borderRadius: '8px', background: 'rgba(200,255,61,0.1)', border: '1px solid var(--lime)', color: 'var(--lime)', fontSize: '12px', cursor: 'pointer' }}>
+                      Standart turlarga qaytarish (Reset)
+                    </button>
+                  )}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {carTypes.map(ct => (
+                    <div key={ct.id} style={{ padding: '16px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <h5 style={{ fontSize: '16px' }}>{ct.name}</h5>
+                        <p style={{ color: 'var(--lime)', fontSize: '13px', fontFamily: 'IBM Plex Mono' }}>Koeffitsient: x{ct.multiplier}</p>
+                      </div>
+                      {onDeleteCarType && (
+                        <button 
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onDeleteCarType(ct.id);
+                            setTimeout(() => handleSaveAll(), 100);
+                          }} 
+                          style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(255,110,110,0.15)', border: '1px solid #ff6e6e', color: '#ff9e9e', cursor: 'pointer' }}>
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleSaveAll}
+                  className="btn-primary"
+                  style={{ width: '100%', marginTop: '24px', padding: '14px', justifyContent: 'center', fontSize: '13px' }}>
+                  <CheckCircle2 size={18} /> BARCHA O'ZGARISHLARNI BULUTGA SAQLASH (SAVE TO CLOUD)
+                </button>
+              </div>
+            )}
+
             {/* TAB 4: EDIT SERVICES */}
             {activeTab === 'services' && (
               <div>
@@ -444,7 +528,16 @@ export default function AdminModal({
                   <input placeholder="Nomer (Masalan: 05)" value={newSvc.number} onChange={e => setNewSvc({ ...newSvc, number: e.target.value })} style={inputStyle} />
                   <input placeholder="Xizmat nomi" value={newSvc.name} onChange={e => setNewSvc({ ...newSvc, name: e.target.value })} style={inputStyle} />
                   <input placeholder="Boshlang'ich narx (so'm)" type="number" value={newSvc.basePrice} onChange={e => setNewSvc({ ...newSvc, basePrice: e.target.value })} style={inputStyle} />
-                  <input placeholder="Tavsif" value={newSvc.description} onChange={e => setNewSvc({ ...newSvc, description: e.target.value })} style={inputStyle} />
+                  <select
+                    value={newSvc.carTypeId || 'all'}
+                    onChange={e => setNewSvc({ ...newSvc, carTypeId: e.target.value })}
+                    style={{ ...inputStyle, background: '#12141a' }}>
+                    <option value="all">📌 Barcha mashina turlari uchun</option>
+                    {carTypes.map(ct => (
+                      <option key={ct.id} value={ct.id}>🚗 Faqat {ct.name} uchun</option>
+                    ))}
+                  </select>
+                  <input placeholder="Tavsif" value={newSvc.description} onChange={e => setNewSvc({ ...newSvc, description: e.target.value })} style={{ ...inputStyle, gridColumn: '1/-1' }} />
                   <button type="submit" className="btn-primary" style={{ padding: '10px', fontSize: '11px', gridColumn: '1/-1' }}>
                     <Plus size={14} /> Xizmatni qo'shish
                   </button>
@@ -461,30 +554,38 @@ export default function AdminModal({
                         }
                       }}
                       style={{ padding: '8px 14px', borderRadius: '8px', background: 'rgba(200,255,61,0.1)', border: '1px solid var(--lime)', color: 'var(--lime)', fontSize: '12px', cursor: 'pointer' }}>
-                      Barcha 4 xizmatni qaytarish (Reset)
+                      Barcha xizmatlarni qaytarish (Reset)
                     </button>
                   )}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {services.map(svc => (
-                    <div key={svc.id} style={{ padding: '16px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <h5 style={{ fontSize: '16px' }}>{svc.number}. {svc.name}</h5>
-                        <p style={{ color: 'var(--lime)', fontSize: '14px' }}>{Number(svc.basePrice).toLocaleString()} so'm</p>
+                  {services.map(svc => {
+                    const assignedType = carTypes.find(c => c.id === svc.carTypeId);
+                    return (
+                      <div key={svc.id} style={{ padding: '16px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <h5 style={{ fontSize: '16px' }}>{svc.number}. {svc.name}</h5>
+                          <p style={{ color: 'var(--lime)', fontSize: '14px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                            <span>{Number(svc.basePrice).toLocaleString()} so'm</span>
+                            <span style={{ color: 'var(--ivory-dim)', fontSize: '12px' }}>
+                              {assignedType ? `🚗 ${assignedType.name}` : "📌 Barcha turlar"}
+                            </span>
+                          </p>
+                        </div>
+                        <button 
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onDeleteService(svc.id);
+                            setTimeout(() => handleSaveAll(), 100);
+                          }} 
+                          style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(255,110,110,0.15)', border: '1px solid #ff6e6e', color: '#ff9e9e', cursor: 'pointer' }}>
+                          <Trash2 size={16} />
+                        </button>
                       </div>
-                      <button 
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          onDeleteService(svc.id);
-                          setTimeout(() => handleSaveAll(), 100);
-                        }} 
-                        style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(255,110,110,0.15)', border: '1px solid #ff6e6e', color: '#ff9e9e', cursor: 'pointer' }}>
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <button

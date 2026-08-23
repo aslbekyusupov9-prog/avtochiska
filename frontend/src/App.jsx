@@ -5,7 +5,7 @@ import Hero from './components/Hero';
 import ServicesAndCalculator from './components/ServicesAndCalculator';
 import OrderForm from './components/OrderForm';
 import AdminModal from './components/AdminModal';
-import { INITIAL_GALLERY, INITIAL_REVIEWS, INITIAL_SERVICES, INITIAL_HERO, INITIAL_SITE_INFO } from './data/mockData';
+import { INITIAL_GALLERY, INITIAL_REVIEWS, INITIAL_SERVICES, INITIAL_HERO, INITIAL_SITE_INFO, INITIAL_CAR_TYPES } from './data/mockData';
 import { Star, MapPin } from 'lucide-react';
 
 import { fetchLiveCloudState, saveLiveCloudState, subscribeToTabSync } from './services/liveSync';
@@ -24,6 +24,11 @@ export default function App() {
   const [services, setServices] = useState(() => {
     const saved = localStorage.getItem('af_react_services_v3');
     return saved ? JSON.parse(saved) : INITIAL_SERVICES;
+  });
+
+  const [carTypes, setCarTypes] = useState(() => {
+    const saved = localStorage.getItem('af_react_cartypes_v3');
+    return saved ? JSON.parse(saved) : INITIAL_CAR_TYPES;
   });
 
   const [reviews, setReviews] = useState(() => {
@@ -67,6 +72,9 @@ export default function App() {
     if (!remote) return;
     if (Array.isArray(remote.services) && remote.services.length > 0) {
       setServices(remote.services);
+    }
+    if (Array.isArray(remote.carTypes) && remote.carTypes.length > 0) {
+      setCarTypes(remote.carTypes);
     }
     if (Array.isArray(remote.gallery)) setGallery(remote.gallery);
     if (Array.isArray(remote.reviews)) setReviews(remote.reviews);
@@ -123,12 +131,13 @@ export default function App() {
     localStorage.setItem('af_react_orders_v3', JSON.stringify(orders));
     localStorage.setItem('af_react_gallery_v3', JSON.stringify(gallery));
     localStorage.setItem('af_react_services_v3', JSON.stringify(services));
+    localStorage.setItem('af_react_cartypes_v3', JSON.stringify(carTypes));
     localStorage.setItem('af_react_reviews_v3', JSON.stringify(reviews));
     localStorage.setItem('af_react_hero_v3', JSON.stringify(heroContent));
     localStorage.setItem('af_react_siteinfo_v3', JSON.stringify(siteInfo));
 
-    syncToCloud({ orders, gallery, services, reviews, heroContent, siteInfo });
-  }, [orders, gallery, services, reviews, heroContent, siteInfo, isLoaded]);
+    syncToCloud({ orders, gallery, services, carTypes, reviews, heroContent, siteInfo });
+  }, [orders, gallery, services, carTypes, reviews, heroContent, siteInfo, isLoaded]);
 
   const handleNewOrder = (order) => setOrders([order, ...orders]);
   const handleUpdateStatus = (id, newStatus) => setOrders(orders.map(o => o.id === id ? { ...o, status: newStatus } : o));
@@ -141,11 +150,16 @@ export default function App() {
   const handleDeleteService = (id) => setServices(services.filter(s => s.id !== id));
   const handleResetServices = () => setServices(INITIAL_SERVICES);
 
+  const handleAddCarType = (ct) => setCarTypes([...carTypes, ct]);
+  const handleDeleteCarType = (id) => setCarTypes(carTypes.filter(c => c.id !== id));
+  const handleResetCarTypes = () => setCarTypes(INITIAL_CAR_TYPES);
+
   const handleForceSaveCloud = () => {
-    const currentState = { orders, gallery, services, reviews, heroContent, siteInfo };
+    const currentState = { orders, gallery, services, carTypes, reviews, heroContent, siteInfo };
     localStorage.setItem('af_react_orders_v3', JSON.stringify(orders));
     localStorage.setItem('af_react_gallery_v3', JSON.stringify(gallery));
     localStorage.setItem('af_react_services_v3', JSON.stringify(services));
+    localStorage.setItem('af_react_cartypes_v3', JSON.stringify(carTypes));
     localStorage.setItem('af_react_reviews_v3', JSON.stringify(reviews));
     localStorage.setItem('af_react_hero_v3', JSON.stringify(heroContent));
     localStorage.setItem('af_react_siteinfo_v3', JSON.stringify(siteInfo));
@@ -327,6 +341,10 @@ export default function App() {
         onAddService={handleAddService}
         onDeleteService={handleDeleteService}
         onResetServices={handleResetServices}
+        carTypes={carTypes}
+        onAddCarType={handleAddCarType}
+        onDeleteCarType={handleDeleteCarType}
+        onResetCarTypes={handleResetCarTypes}
         onForceSaveCloud={handleForceSaveCloud}
         heroContent={heroContent}
         onUpdateHero={setHeroContent}

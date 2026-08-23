@@ -1598,8 +1598,8 @@
                                 placeholder="+998 90 123 45 67" /></div>
                     </div>
                     <div class="f-row">
-                        <div class="field"><label for="car">Mashina modeli *</label><input id="car" name="car"
-                                placeholder="Chevrolet Cobalt" /></div>
+                        <div class="field"><label for="car">Mashina modeli (Ixtiyoriy)</label><input id="car" name="car"
+                                placeholder="Chevrolet Cobalt (ixtiyoriy)" /></div>
                         <div class="field"><label for="service">Xizmat turi *</label>
                             <select id="service" name="service">
                                 <option value="">Tanlang…</option>
@@ -1884,7 +1884,7 @@
                         name: f.name.value.trim(), phone: f.phone.value.trim(), car: f.car.value.trim(),
                         service: f.service.value, date: f.date.value, note: f.note.value.trim()
                     };
-                    if (!data.name || !data.phone || !data.car || !data.service || !data.date) {
+                    if (!data.name || !data.phone || !data.service || !data.date) {
                         msg(el, "Iltimos, yulduzcha (*) bilan belgilangan barcha maydonlarni to'ldiring.", "err"); return;
                     }
                     var digits = data.phone.replace(/\D/g, "");

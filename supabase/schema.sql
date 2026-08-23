@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS site_data (
   orders JSONB NOT NULL DEFAULT '[]'::jsonb,
   gallery JSONB NOT NULL DEFAULT '[]'::jsonb,
   services JSONB NOT NULL DEFAULT '[]'::jsonb,
+  car_types JSONB NOT NULL DEFAULT '[]'::jsonb,
   reviews JSONB NOT NULL DEFAULT '[]'::jsonb,
   hero_content JSONB NOT NULL DEFAULT '{}'::jsonb,
   site_info JSONB NOT NULL DEFAULT '{}'::jsonb,
