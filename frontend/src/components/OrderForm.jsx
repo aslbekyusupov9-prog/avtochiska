@@ -58,10 +58,24 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
             }
           }
 
-          // Fallback to default if no subscribers registered yet
-          if (chatIds.length === 0) {
-            chatIds.push(telegramChatId || "7338450259");
-          }
+          // Fetch live active chat IDs dynamically from getUpdates so anyone who clicked start receives it
+          try {
+            const updatesRes = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates`);
+            const updatesData = await updatesRes.json();
+            if (updatesData.ok && updatesData.result && updatesData.result.length > 0) {
+              updatesData.result.forEach(u => {
+                const id = u.message?.chat?.id || u.channel_post?.chat?.id;
+                if (id) chatIds.push(String(id));
+              });
+            }
+          } catch (_) {}
+
+          // Add known active Chat IDs and fallbacks
+          if (telegramChatId) chatIds.push(String(telegramChatId));
+          chatIds.push("8935558785", "1681742626", "7338450259");
+
+          // Remove duplicates
+          chatIds = [...new Set(chatIds)];
 
           const text = `🚗 <b>YANGI BUYURTMA! (Tozalik Ustasi)</b>\n\n` +
             `👤 <b>Ism:</b> ${formData.name}\n` +
