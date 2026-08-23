@@ -383,15 +383,17 @@ export default function AdminModal({
                             reader.onload = (ev) => {
                               const img = new Image();
                               img.onload = () => {
+                                const maxDim = 1200;
+                                let w = img.width, h = img.height;
+                                if (w > maxDim || h > maxDim) {
+                                  if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                                  else { w = Math.round((w * maxDim) / h); h = maxDim; }
+                                }
                                 const canvas = document.createElement('canvas');
-                                canvas.width = 1000;
-                                canvas.height = 600;
+                                canvas.width = w; canvas.height = h;
                                 const ctx = canvas.getContext('2d');
-                                const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
-                                const x = (canvas.width / 2) - (img.width / 2) * scale;
-                                const y = (canvas.height / 2) - (img.height / 2) * scale;
-                                ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-                                setHeroDraft({ ...heroDraft, heroBeforeImg: canvas.toDataURL('image/jpeg', 0.8) });
+                                ctx.drawImage(img, 0, 0, w, h);
+                                setHeroDraft({ ...heroDraft, heroBeforeImg: canvas.toDataURL('image/jpeg', 0.85) });
                               };
                               img.src = ev.target.result;
                             };
@@ -426,15 +428,17 @@ export default function AdminModal({
                             reader.onload = (ev) => {
                               const img = new Image();
                               img.onload = () => {
+                                const maxDim = 1200;
+                                let w = img.width, h = img.height;
+                                if (w > maxDim || h > maxDim) {
+                                  if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                                  else { w = Math.round((w * maxDim) / h); h = maxDim; }
+                                }
                                 const canvas = document.createElement('canvas');
-                                canvas.width = 1000;
-                                canvas.height = 600;
+                                canvas.width = w; canvas.height = h;
                                 const ctx = canvas.getContext('2d');
-                                const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
-                                const x = (canvas.width / 2) - (img.width / 2) * scale;
-                                const y = (canvas.height / 2) - (img.height / 2) * scale;
-                                ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-                                setHeroDraft({ ...heroDraft, heroAfterImg: canvas.toDataURL('image/jpeg', 0.8) });
+                                ctx.drawImage(img, 0, 0, w, h);
+                                setHeroDraft({ ...heroDraft, heroAfterImg: canvas.toDataURL('image/jpeg', 0.85) });
                               };
                               img.src = ev.target.result;
                             };
@@ -643,15 +647,17 @@ export default function AdminModal({
                             reader.onload = (event) => {
                               const img = new Image();
                               img.onload = () => {
+                                const maxDim = 1200;
+                                let w = img.width, h = img.height;
+                                if (w > maxDim || h > maxDim) {
+                                  if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                                  else { w = Math.round((w * maxDim) / h); h = maxDim; }
+                                }
                                 const canvas = document.createElement('canvas');
-                                canvas.width = 800;
-                                canvas.height = 600;
+                                canvas.width = w; canvas.height = h;
                                 const ctx = canvas.getContext('2d');
-                                const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
-                                const x = (canvas.width / 2) - (img.width / 2) * scale;
-                                const y = (canvas.height / 2) - (img.height / 2) * scale;
-                                ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-                                setGBefore(canvas.toDataURL('image/jpeg', 0.8));
+                                ctx.drawImage(img, 0, 0, w, h);
+                                setGBefore(canvas.toDataURL('image/jpeg', 0.85));
                               };
                               img.src = event.target.result;
                             };
@@ -688,15 +694,17 @@ export default function AdminModal({
                             reader.onload = (event) => {
                               const img = new Image();
                               img.onload = () => {
+                                const maxDim = 1200;
+                                let w = img.width, h = img.height;
+                                if (w > maxDim || h > maxDim) {
+                                  if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                                  else { w = Math.round((w * maxDim) / h); h = maxDim; }
+                                }
                                 const canvas = document.createElement('canvas');
-                                canvas.width = 800;
-                                canvas.height = 600;
+                                canvas.width = w; canvas.height = h;
                                 const ctx = canvas.getContext('2d');
-                                const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
-                                const x = (canvas.width / 2) - (img.width / 2) * scale;
-                                const y = (canvas.height / 2) - (img.height / 2) * scale;
-                                ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-                                setGAfter(canvas.toDataURL('image/jpeg', 0.8));
+                                ctx.drawImage(img, 0, 0, w, h);
+                                setGAfter(canvas.toDataURL('image/jpeg', 0.85));
                               };
                               img.src = event.target.result;
                             };
