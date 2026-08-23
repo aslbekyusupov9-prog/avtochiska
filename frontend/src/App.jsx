@@ -258,7 +258,7 @@ export default function App() {
           <div className="gallery-grid">
             {gallery.map((g) => (
               <motion.div whileHover={{ y: -6 }} transition={{ duration: 0.2 }} key={g.id} className="glass-card" style={{ padding: '16px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', height: '240px', borderRadius: '12px', overflow: 'hidden', background: '#090a0f', position: 'relative' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', height: '320px', borderRadius: '12px', overflow: 'hidden', background: '#090a0f', position: 'relative' }}>
                   <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#090a0f' }}>
                     <img
                       src={g.before}
