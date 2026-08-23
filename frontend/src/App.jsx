@@ -324,18 +324,18 @@ export default function App() {
             </div>
           )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
             {reviews.map((rev) => (
-              <motion.div whileHover={{ y: -6 }} key={rev.id} className="glass-card" style={{ padding: '32px' }}>
-                <div style={{ display: 'flex', gap: '4px', color: 'var(--lime)', marginBottom: '12px' }}>
-                  {[...Array(rev.rating || 5)].map((_, i) => <Star key={i} size={16} fill="var(--lime)" />)}
+              <motion.div whileHover={{ y: -6 }} key={rev.id} className="glass-card" style={{ padding: '28px 24px 20px 24px', borderRadius: '18px' }}>
+                <div style={{ display: 'flex', gap: '6px', color: 'var(--lime)', marginBottom: '16px' }}>
+                  {[...Array(rev.rating || 5)].map((_, i) => <Star key={i} size={18} fill="var(--lime)" color="var(--lime)" />)}
                 </div>
-                <p style={{ fontStyle: 'italic', color: 'var(--ivory-dim)', fontSize: '15px', lineHeight: 1.7, marginBottom: '20px' }}>
+                <p style={{ fontStyle: 'italic', color: '#C5C7CE', fontSize: '15px', lineHeight: 1.6, marginBottom: '24px' }}>
                   "{rev.comment}"
                 </p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid var(--line)' }}>
-                  <span className="font-mono" style={{ fontSize: '13px', fontWeight: 600 }}>{rev.author}</span>
-                  <span className="font-mono" style={{ fontSize: '11px', color: 'var(--grey)' }}>{rev.car}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <span className="font-mono" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ivory)' }}>{rev.author}</span>
+                  <span className="font-mono" style={{ fontSize: '12px', color: '#6E727A' }}>{rev.car}</span>
                 </div>
               </motion.div>
             ))}

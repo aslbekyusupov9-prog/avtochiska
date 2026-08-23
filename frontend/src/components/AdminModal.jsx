@@ -108,9 +108,10 @@ export default function AdminModal({
   const handleCreateReview = (e) => {
     e.preventDefault();
     if (!newRev.author || !newRev.comment) return;
-    onAddReview({ ...newRev, id: 'r' + Date.now(), rating: Number(newRev.rating) });
+    onAddReview({ ...newRev, id: 'r_' + Date.now(), rating: Number(newRev.rating) });
     setNewRev({ author: '', car: '', rating: 5, comment: '', date: 'Bugun' });
-    setTimeout(() => handleSaveAll(), 100);
+    setSaveMsg("✅ Yangi sharh muvaffaqiyatli saqlandi va saytga qo'shildi!");
+    setTimeout(() => setSaveMsg(''), 4000);
   };
 
   const handleAddGalItem = (e) => {
@@ -768,7 +769,7 @@ export default function AdminModal({
                         <h5 style={{ fontSize: '15px' }}>{r.author} <span style={{ color: 'var(--grey)', fontSize: '12px' }}>({r.car})</span></h5>
                         <p style={{ color: 'var(--ivory-dim)', fontSize: '13px', marginTop: '4px' }}>"{r.comment}"</p>
                       </div>
-                      <button type="button" onClick={() => { onDeleteReview(r.id); setTimeout(() => handleSaveAll(), 200); }} style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(255,110,110,0.15)', border: '1px solid #ff6e6e', color: '#ff9e9e', cursor: 'pointer' }}>
+                      <button type="button" onClick={() => onDeleteReview(r.id)} style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(255,110,110,0.15)', border: '1px solid #ff6e6e', color: '#ff9e9e', cursor: 'pointer' }}>
                         <Trash2 size={16} />
                       </button>
                     </div>
