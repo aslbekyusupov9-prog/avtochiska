@@ -89,27 +89,39 @@ export default function Hero({ heroContent }) {
           <img
             src={data.heroAfterImg || "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=1000"}
             alt="Tozalangan salon"
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
           />
 
-          {/* Before image clipped (Dirty interior) */}
+          {/* Before image clipped (Dirty interior - motionless static reveal) */}
+          <img
+            src={data.heroBeforeImg || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1000"}
+            alt="Iflos salon"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              pointerEvents: 'none',
+              clipPath: `inset(0 ${100 - sliderPos}% 0 0)`
+            }}
+          />
+
+          {/* Dividing Vertical Line */}
           <div style={{
             position: 'absolute',
             top: 0,
-            left: 0,
             bottom: 0,
-            width: `${sliderPos}%`,
-            overflow: 'hidden',
-            borderRight: '3px solid var(--lime)',
+            left: `${sliderPos}%`,
+            width: '3px',
+            background: 'var(--lime)',
+            transform: 'translateX(-50%)',
             pointerEvents: 'none',
-            zIndex: 2
-          }}>
-            <img
-              src={data.heroBeforeImg || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1000"}
-              alt="Iflos salon"
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain', maxWidth: 'none' }}
-            />
-          </div>
+            zIndex: 3,
+            boxShadow: '0 0 12px rgba(200, 255, 61, 0.6)'
+          }} />
+
+          {/* Touch Draggable Central Handle Circle */}
 
           {/* Touch Draggable Central Handle Circle */}
           <div style={{
