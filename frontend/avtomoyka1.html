@@ -1644,8 +1644,7 @@
                         id="adminBtn">Admin</button>
                 </div>
             </div>
-            <div class="copy"><span>© <span id="year"></span> Tozalik ustasi</span><span>Ma'lumotlar brauzer
-                    xotirasida</span></div>
+            <div class="copy"><span>© <span id="year"></span> Tozalik ustasi</span><span>Jonli bulutli uzatish (Realtime Cloud Sync)</span></div>
         </div>
     </footer>
 
@@ -1696,19 +1695,10 @@
             var K_ORDERS = "af_orders_v1", K_GAL = "af_gallery_v1", PASSWORD = "admin123";
 
             function load(key, fallback) {
-                try {
-                    var raw = localStorage.getItem(key);
-                    if (!raw) return fallback;
-                    var v = JSON.parse(raw);
-                    return Array.isArray(v) ? v : fallback;
-                } catch (e) {
-                    console.error(e);
-                    return fallback;
-                }
+                return fallback;
             }
             function save(key, val) {
-                try { localStorage.setItem(key, JSON.stringify(val)); return true; }
-                catch (e) { console.error(e); return false; }
+                return true;
             }
             function esc(s) {
                 return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {

@@ -11,58 +11,13 @@ import { Star, MapPin } from 'lucide-react';
 import { fetchLiveCloudState, saveLiveCloudState, subscribeToTabSync } from './services/liveSync';
 
 export default function App() {
-  const [orders, setOrders] = useState(() => {
-    const saved = localStorage.getItem('af_react_orders_v3');
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const [gallery, setGallery] = useState(() => {
-    const saved = localStorage.getItem('af_react_gallery_v3');
-    return saved ? JSON.parse(saved) : INITIAL_GALLERY;
-  });
-
-  const [services, setServices] = useState(() => {
-    const saved = localStorage.getItem('af_react_services_v3');
-    return saved ? JSON.parse(saved) : INITIAL_SERVICES;
-  });
-
-  const [carTypes, setCarTypes] = useState(() => {
-    const saved = localStorage.getItem('af_react_cartypes_v3');
-    return saved ? JSON.parse(saved) : INITIAL_CAR_TYPES;
-  });
-
-  const [reviews, setReviews] = useState(() => {
-    const saved = localStorage.getItem('af_react_reviews_v3');
-    return saved ? JSON.parse(saved) : INITIAL_REVIEWS;
-  });
-
-  const [heroContent, setHeroContent] = useState(() => {
-    const saved = localStorage.getItem('af_react_hero_v3');
-    if (!saved) return INITIAL_HERO;
-    try {
-      const parsed = JSON.parse(saved);
-      if (parsed.stat2Value === "4,200+") {
-        parsed.stat2Value = "40+";
-      }
-      return parsed;
-    } catch {
-      return INITIAL_HERO;
-    }
-  });
-
-  const [siteInfo, setSiteInfo] = useState(() => {
-    const saved = localStorage.getItem('af_react_siteinfo_v3');
-    if (!saved) return INITIAL_SITE_INFO;
-    try {
-      const parsed = JSON.parse(saved);
-      if (parsed.phone2 === "+998 71 200 11 22") {
-        parsed.phone2 = "+998 33 779 80 80";
-      }
-      return parsed;
-    } catch {
-      return INITIAL_SITE_INFO;
-    }
-  });
+  const [orders, setOrders] = useState([]);
+  const [gallery, setGallery] = useState(INITIAL_GALLERY);
+  const [services, setServices] = useState(INITIAL_SERVICES);
+  const [carTypes, setCarTypes] = useState(INITIAL_CAR_TYPES);
+  const [reviews, setReviews] = useState(INITIAL_REVIEWS);
+  const [heroContent, setHeroContent] = useState(INITIAL_HERO);
+  const [siteInfo, setSiteInfo] = useState(INITIAL_SITE_INFO);
 
   const [adminOpen, setAdminOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -76,8 +31,12 @@ export default function App() {
     if (Array.isArray(remote.carTypes) && remote.carTypes.length > 0) {
       setCarTypes(remote.carTypes);
     }
-    if (Array.isArray(remote.gallery)) setGallery(remote.gallery);
-    if (Array.isArray(remote.reviews)) setReviews(remote.reviews);
+    if (Array.isArray(remote.gallery) && remote.gallery.length > 0) {
+      setGallery(remote.gallery);
+    }
+    if (Array.isArray(remote.reviews) && remote.reviews.length > 0) {
+      setReviews(remote.reviews);
+    }
     if (remote.heroContent && typeof remote.heroContent === 'object' && Object.keys(remote.heroContent).length > 0) {
       const updatedHero = { ...remote.heroContent };
       if (updatedHero.stat2Value === "4,200+") {
@@ -121,22 +80,10 @@ export default function App() {
     };
   }, []);
 
-  // Save changes to both Local Storage & Public Cloud Server
-  const syncToCloud = (newState) => {
-    saveLiveCloudState(newState);
-  };
-
+  // Save changes strictly to Public Cloud Server (Supabase)
   useEffect(() => {
     if (!isLoaded) return;
-    localStorage.setItem('af_react_orders_v3', JSON.stringify(orders));
-    localStorage.setItem('af_react_gallery_v3', JSON.stringify(gallery));
-    localStorage.setItem('af_react_services_v3', JSON.stringify(services));
-    localStorage.setItem('af_react_cartypes_v3', JSON.stringify(carTypes));
-    localStorage.setItem('af_react_reviews_v3', JSON.stringify(reviews));
-    localStorage.setItem('af_react_hero_v3', JSON.stringify(heroContent));
-    localStorage.setItem('af_react_siteinfo_v3', JSON.stringify(siteInfo));
-
-    syncToCloud({ orders, gallery, services, carTypes, reviews, heroContent, siteInfo });
+    saveLiveCloudState({ orders, gallery, services, carTypes, reviews, heroContent, siteInfo });
   }, [orders, gallery, services, carTypes, reviews, heroContent, siteInfo, isLoaded]);
 
   const handleNewOrder = (order) => setOrders([order, ...orders]);
@@ -156,16 +103,7 @@ export default function App() {
   const handleResetCarTypes = () => setCarTypes(INITIAL_CAR_TYPES);
 
   const handleForceSaveCloud = () => {
-    const currentState = { orders, gallery, services, carTypes, reviews, heroContent, siteInfo };
-    localStorage.setItem('af_react_orders_v3', JSON.stringify(orders));
-    localStorage.setItem('af_react_gallery_v3', JSON.stringify(gallery));
-    localStorage.setItem('af_react_services_v3', JSON.stringify(services));
-    localStorage.setItem('af_react_cartypes_v3', JSON.stringify(carTypes));
-    localStorage.setItem('af_react_reviews_v3', JSON.stringify(reviews));
-    localStorage.setItem('af_react_hero_v3', JSON.stringify(heroContent));
-    localStorage.setItem('af_react_siteinfo_v3', JSON.stringify(siteInfo));
-
-    saveLiveCloudState(currentState);
+    saveLiveCloudState({ orders, gallery, services, carTypes, reviews, heroContent, siteInfo });
   };
 
   const handleAddReview = (rev) => setReviews([rev, ...reviews]);

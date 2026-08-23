@@ -5,8 +5,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn(
-    '[Supabase] VITE_SUPABASE_URL yoki VITE_SUPABASE_ANON_KEY .env faylida topilmadi. ' +
-    'Ma\'lumotlar faqat localStorage da saqlanadi.'
+    '[Supabase] VITE_SUPABASE_URL yoki VITE_SUPABASE_ANON_KEY .env faylida topilmadi.'
   );
 }
 
