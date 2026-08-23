@@ -114,7 +114,7 @@ export const INITIAL_HERO = {
   description: "Avtomobil salon ximchistkasi: o'rindiq, gilam, shift va butun salonni chuqur tozalash. Oldin/keyin natijalar, onlayn buyurtma.",
   stat1Value: "3–5 Soatda",
   stat1Label: "Avtomobilingiz to'liq tozalab, quritib topshiriladi.",
-  stat2Value: "4,200+",
+  stat2Value: "40+",
   stat2Label: "Muvaffaqiyatli tozalangan avtomobillar soni."
 };
 

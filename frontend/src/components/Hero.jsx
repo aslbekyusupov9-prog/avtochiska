@@ -89,7 +89,7 @@ export default function Hero({ heroContent }) {
           <img
             src={data.heroAfterImg || "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=1000"}
             alt="Tozalangan salon"
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }}
           />
 
           {/* Before image clipped (Dirty interior) */}
@@ -107,7 +107,7 @@ export default function Hero({ heroContent }) {
             <img
               src={data.heroBeforeImg || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1000"}
               alt="Iflos salon"
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '420px', objectFit: 'cover', maxWidth: 'none' }}
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain', maxWidth: 'none' }}
             />
           </div>
 
@@ -166,7 +166,7 @@ export default function Hero({ heroContent }) {
               <Award size={24} />
               <span className="font-mono" style={{ fontSize: '11px', letterSpacing: '0.2em' }}>TAJRIBA</span>
             </div>
-            <h3 className="font-serif" style={{ fontSize: '48px', fontWeight: 400, marginTop: '8px' }}>{data.stat2Value || "4,200+"}</h3>
+            <h3 className="font-serif" style={{ fontSize: '48px', fontWeight: 400, marginTop: '8px' }}>{data.stat2Value || "40+"}</h3>
             <p style={{ color: 'var(--ivory-dim)', fontSize: '14px' }}>{data.stat2Label || "Muvaffaqiyatli tozalangan avtomobillar soni."}</p>
           </div>
         </div>
