@@ -47,28 +47,16 @@ export default function App() {
 
   const applyRemoteState = (remote) => {
     if (!remote) return;
-    if (Array.isArray(remote.services)) {
-      const isLegacy = remote.services.some(s => s.basePrice === 350000 || s.name.includes("140°C Bug"));
-      if (!isLegacy) {
-        setServices(remote.services);
-      }
+    if (Array.isArray(remote.services) && remote.services.length > 0) {
+      setServices(remote.services);
     }
     if (Array.isArray(remote.gallery)) setGallery(remote.gallery);
-    if (Array.isArray(remote.reviews)) {
-      const isLegacyRev = remote.reviews.some(r => r.author === "Jasur Raximov");
-      if (!isLegacyRev) {
-        setReviews(remote.reviews);
-      }
-    }
+    if (Array.isArray(remote.reviews)) setReviews(remote.reviews);
     if (remote.heroContent && typeof remote.heroContent === 'object' && Object.keys(remote.heroContent).length > 0) {
-      if (remote.heroContent.titleLine1 !== "SALON") {
-        setHeroContent(remote.heroContent);
-      }
+      setHeroContent(remote.heroContent);
     }
     if (remote.siteInfo && typeof remote.siteInfo === 'object' && Object.keys(remote.siteInfo).length > 0) {
-      if (remote.siteInfo.phone1 !== "+998 90 123 45 67") {
-        setSiteInfo(remote.siteInfo);
-      }
+      setSiteInfo(remote.siteInfo);
     }
     if (Array.isArray(remote.orders)) setOrders(remote.orders);
   };
