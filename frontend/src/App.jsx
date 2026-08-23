@@ -184,11 +184,21 @@ export default function App() {
     saveLiveCloudState({ orders, gallery, services, carTypes, reviews, heroContent, siteInfo });
   };
 
-  const handleAddReview = (rev) => {
+  const handleAddReview = async (rev) => {
+    let updatedReviews = [];
     setReviews(prev => {
-      const updated = [rev, ...prev];
-      saveLiveCloudState({ orders, gallery, services, carTypes, reviews: updated, heroContent, siteInfo });
-      return updated;
+      updatedReviews = [rev, ...prev];
+      return updatedReviews;
+    });
+
+    await saveLiveCloudState({
+      orders,
+      gallery,
+      services,
+      carTypes,
+      reviews: updatedReviews,
+      heroContent,
+      siteInfo
     });
 
     if (siteInfo.telegramToken && siteInfo.telegramChatId) {
