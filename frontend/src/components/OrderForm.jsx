@@ -39,13 +39,14 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
     };
 
     // Telegram Bot Push Notification logic
-    if (telegramToken) {
+    const botToken = telegramToken || "8925592658:AAGYwLXwNrqawhwHVJ-L5A70O1i4bXq_CbQ";
+    if (botToken) {
       try {
         let targetChatId = telegramChatId || localStorage.getItem('af_chat_id');
         
         // If Chat ID is not set yet, attempt to fetch automatically from bot updates
         if (!targetChatId) {
-          const updatesRes = await fetch(`https://api.telegram.org/bot${telegramToken}/getUpdates`);
+          const updatesRes = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates`);
           const updatesData = await updatesRes.json();
           if (updatesData.ok && updatesData.result && updatesData.result.length > 0) {
             const lastUpdate = updatesData.result[updatesData.result.length - 1];
@@ -63,6 +64,8 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
           }
         }
 
+        console.log("[Telegram Debug] Sending notification...", { botToken, targetChatId });
+
         if (targetChatId) {
           const text = `🚗 *YANGI BUYURTMA! (Tozalik Ustasi)*\n\n` +
             `👤 *Ism:* ${formData.name}\n` +
@@ -74,7 +77,7 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
             `📝 *Izoh:* ${formData.note || "Yo'q"}\n` +
             `🆔 *ID:* \`${orderId}\``;
 
-          await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+          const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -83,10 +86,20 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
               parse_mode: 'Markdown'
             })
           });
+
+          const resData = await response.json();
+          console.log("[Telegram Debug] Send result:", resData);
+          if (!resData.ok) {
+            console.error("[Telegram Debug] Failed to send message:", resData.description);
+          }
+        } else {
+          console.warn("[Telegram Debug] No targetChatId found. Cannot send message.");
         }
       } catch (err) {
         console.error("Telegram notification error:", err);
       }
+    } else {
+      console.warn("[Telegram Debug] No telegramToken found.");
     }
 
     // Local state save
