@@ -44,8 +44,8 @@ export async function fetchLiveCloudState() {
     const result = {
       orders: data.orders ?? backup?.orders ?? [],
       gallery: data.gallery ?? backup?.gallery ?? [],
-      services: (Array.isArray(data.services) && data.services.length > 0) ? data.services : (backup?.services ?? []),
-      carTypes: (Array.isArray(fetchedCarTypes) && fetchedCarTypes.length > 0) ? fetchedCarTypes : (backup?.carTypes ?? []),
+      services: Array.isArray(data.services) ? data.services : (backup?.services ?? []),
+      carTypes: Array.isArray(fetchedCarTypes) ? fetchedCarTypes : (backup?.carTypes ?? []),
       reviews: data.reviews ?? backup?.reviews ?? [],
       heroContent: data.hero_content ?? backup?.heroContent ?? {},
       siteInfo: data.site_info ?? backup?.siteInfo ?? {},

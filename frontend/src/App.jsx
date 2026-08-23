@@ -25,16 +25,16 @@ export default function App() {
 
   const applyRemoteState = (remote) => {
     if (!remote) return;
-    if (Array.isArray(remote.services) && remote.services.length > 0) {
+    if (Array.isArray(remote.services)) {
       setServices(remote.services);
     }
-    if (Array.isArray(remote.carTypes) && remote.carTypes.length > 0) {
+    if (Array.isArray(remote.carTypes)) {
       setCarTypes(remote.carTypes);
     }
-    if (Array.isArray(remote.gallery) && remote.gallery.length > 0) {
+    if (Array.isArray(remote.gallery)) {
       setGallery(remote.gallery);
     }
-    if (Array.isArray(remote.reviews) && remote.reviews.length > 0) {
+    if (Array.isArray(remote.reviews)) {
       setReviews(remote.reviews);
     }
     if (remote.heroContent && typeof remote.heroContent === 'object' && Object.keys(remote.heroContent).length > 0) {
