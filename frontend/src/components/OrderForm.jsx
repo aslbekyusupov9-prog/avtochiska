@@ -41,13 +41,28 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
     // Telegram Bot Push Notification logic
     const botToken = telegramToken || "8925592658:AAGYwLXwNrqawhwHVJ-L5A70O1i4bXq_CbQ";
     if (botToken) {
-      try {
-        const targetChatId = telegramChatId || "7338450259";
+      // Async operation to fetch subscribers from Supabase and broadcast
+      (async () => {
+        try {
+          let chatIds = [];
+          
+          // Import supabase from client config
+          const { supabase } = await import('../lib/supabase');
+          if (supabase) {
+            const { data: subscribers, error } = await supabase
+              .from('telegram_subscribers')
+              .select('chat_id');
+            
+            if (!error && subscribers && subscribers.length > 0) {
+              chatIds = subscribers.map(s => s.chat_id);
+            }
+          }
 
-        console.log("[Telegram Debug] Sending notification...", { botToken, targetChatId });
+          // Fallback to default if no subscribers registered yet
+          if (chatIds.length === 0) {
+            chatIds.push(telegramChatId || "7338450259");
+          }
 
-        if (targetChatId) {
-          const numericChatId = Number(String(targetChatId).replace(/\D/g, ''));
           const text = `🚗 <b>YANGI BUYURTMA! (Tozalik Ustasi)</b>\n\n` +
             `👤 <b>Ism:</b> ${formData.name}\n` +
             `📞 <b>Tel:</b> ${formData.phone}\n` +
@@ -58,27 +73,32 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
             `📝 <b>Izoh:</b> ${formData.note || "Yo'q"}\n` +
             `🆔 <b>ID:</b> <code>${orderId}</code>`;
 
-          const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              chat_id: numericChatId,
-              text: text,
-              parse_mode: 'HTML'
+          // Broadcast to all chat IDs in parallel
+          await Promise.all(
+            chatIds.map(async (chatId) => {
+              try {
+                const numericChatId = Number(String(chatId).replace(/\D/g, ''));
+                console.log("[Telegram Debug] Broadcasting to:", numericChatId);
+                const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    chat_id: numericChatId,
+                    text: text,
+                    parse_mode: 'HTML'
+                  })
+                });
+                const resData = await response.json();
+                console.log(`[Telegram Debug] Send to ${numericChatId} result:`, resData);
+              } catch (err) {
+                console.error(`[Telegram Debug] Broadcast to ${chatId} failed:`, err);
+              }
             })
-          });
-
-          const resData = await response.json();
-          console.log("[Telegram Debug] Send result:", resData);
-          if (!resData.ok) {
-            console.error("[Telegram Debug] Failed to send message:", resData.description);
-          }
-        } else {
-          console.warn("[Telegram Debug] No targetChatId found. Cannot send message.");
+          );
+        } catch (err) {
+          console.error("Telegram broadcast exception:", err);
         }
-      } catch (err) {
-        console.error("Telegram notification error:", err);
-      }
+      })();
     } else {
       console.warn("[Telegram Debug] No telegramToken found.");
     }

@@ -47,6 +47,25 @@ CREATE TRIGGER update_site_data_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
+-- 7. Telegram botga start bosgan foydalanuvchilar jadvali
+CREATE TABLE IF NOT EXISTS telegram_subscribers (
+  chat_id TEXT PRIMARY KEY,
+  first_name TEXT,
+  username TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- RLS yoqish
+ALTER TABLE telegram_subscribers ENABLE ROW LEVEL SECURITY;
+
+-- Barcha operatsiyalarga ruxsat (anon key orqali)
+DROP POLICY IF EXISTS "allow_all_subscribers" ON telegram_subscribers;
+CREATE POLICY "allow_all_subscribers" ON telegram_subscribers
+  FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
+
 -- =====================================================
 -- Tekshirish: SELECT * FROM site_data;
 -- =====================================================
