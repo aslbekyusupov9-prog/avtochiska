@@ -257,26 +257,26 @@ export default function App() {
           </div>
           <div className="gallery-grid">
             {gallery.map((g) => (
-              <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }} key={g.id} className="glass-card" style={{ padding: '12px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', height: '150px', borderRadius: '10px', overflow: 'hidden', background: '#07080a', position: 'relative' }}>
-                  <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#07080a' }}>
+              <motion.div whileHover={{ y: -6 }} transition={{ duration: 0.2 }} key={g.id} className="glass-card" style={{ padding: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', height: '240px', borderRadius: '12px', overflow: 'hidden', background: '#090a0f', position: 'relative' }}>
+                  <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#090a0f' }}>
                     <img
                       src={g.before}
                       alt="Before"
-                      style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain', display: 'block', transform: 'none' }}
+                      style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#090a0f', display: 'block' }}
                     />
-                    <span style={{ position: 'absolute', bottom: '6px', left: '6px', background: 'rgba(0,0,0,0.85)', color: 'var(--ivory)', fontSize: '9px', padding: '2px 6px', borderRadius: '4px', fontFamily: 'IBM Plex Mono', border: '1px solid rgba(255,255,255,0.1)' }}>OLDIN</span>
+                    <span style={{ position: 'absolute', bottom: '8px', left: '8px', background: 'rgba(0,0,0,0.85)', color: 'var(--ivory)', fontSize: '10px', padding: '3px 8px', borderRadius: '6px', fontFamily: 'IBM Plex Mono', border: '1px solid rgba(255,255,255,0.1)' }}>OLDIN</span>
                   </div>
-                  <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#07080a' }}>
+                  <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#090a0f' }}>
                     <img
                       src={g.after}
                       alt="After"
-                      style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain', display: 'block', transform: 'none' }}
+                      style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#090a0f', display: 'block' }}
                     />
-                    <span style={{ position: 'absolute', bottom: '6px', right: '6px', background: 'var(--lime)', color: '#000', fontSize: '9px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px', fontFamily: 'IBM Plex Mono' }}>KEYIN</span>
+                    <span style={{ position: 'absolute', bottom: '8px', right: '8px', background: 'var(--lime)', color: '#000', fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px', fontFamily: 'IBM Plex Mono' }}>KEYIN</span>
                   </div>
                 </div>
-                <h4 className="font-display" style={{ fontSize: '15px', marginTop: '10px', textTransform: 'uppercase' }}>{g.title}</h4>
+                <h4 className="font-display" style={{ fontSize: '18px', marginTop: '14px', textTransform: 'uppercase' }}>{g.title}</h4>
               </motion.div>
             ))}
           </div>
