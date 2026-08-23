@@ -89,22 +89,25 @@ export default function Hero({ heroContent }) {
           <img
             src={data.heroAfterImg || "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=1000"}
             alt="Tozalangan salon"
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
           />
 
           {/* Before image clipped (Dirty interior) */}
           <div style={{
             position: 'absolute',
-            inset: 0,
+            top: 0,
+            left: 0,
+            bottom: 0,
             width: `${sliderPos}%`,
             overflow: 'hidden',
             borderRight: '3px solid var(--lime)',
-            pointerEvents: 'none'
+            pointerEvents: 'none',
+            zIndex: 2
           }}>
             <img
               src={data.heroBeforeImg || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1000"}
               alt="Iflos salon"
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }}
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '420px', objectFit: 'cover', maxWidth: 'none' }}
             />
           </div>
 
