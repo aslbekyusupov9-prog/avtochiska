@@ -94,9 +94,15 @@ export default function AdminModal({
   const handleCreateService = (e) => {
     e.preventDefault();
     if (!newSvc.name || !newSvc.basePrice) return;
-    onAddService({ ...newSvc, id: 's' + Date.now(), basePrice: Number(newSvc.basePrice), carTypeId: newSvc.carTypeId || 'all' });
-    setNewSvc({ number: '07', name: '', description: '', basePrice: 200000, tag: 'Yangi', carTypeId: 'all' });
-    setTimeout(() => handleSaveAll(), 100);
+    const num = newSvc.number || String(services.length + 1).padStart(2, '0');
+    onAddService({
+      ...newSvc,
+      id: 's_' + Date.now(),
+      number: num,
+      basePrice: Number(newSvc.basePrice),
+      carTypeId: newSvc.carTypeId || 'all'
+    });
+    setNewSvc({ number: String(services.length + 2).padStart(2, '0'), name: '', description: '', basePrice: 200000, tag: 'Yangi', carTypeId: 'all' });
   };
 
   const handleCreateReview = (e) => {

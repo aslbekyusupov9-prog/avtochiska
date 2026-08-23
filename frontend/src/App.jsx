@@ -86,28 +86,115 @@ export default function App() {
     saveLiveCloudState({ orders, gallery, services, carTypes, reviews, heroContent, siteInfo });
   }, [orders, gallery, services, carTypes, reviews, heroContent, siteInfo, isLoaded]);
 
-  const handleNewOrder = (order) => setOrders([order, ...orders]);
-  const handleUpdateStatus = (id, newStatus) => setOrders(orders.map(o => o.id === id ? { ...o, status: newStatus } : o));
-  const handleDeleteOrder = (id) => setOrders(orders.filter(o => o.id !== id));
+  const handleNewOrder = (order) => {
+    setOrders(prev => {
+      const updated = [order, ...prev];
+      saveLiveCloudState({ orders: updated, gallery, services, carTypes, reviews, heroContent, siteInfo });
+      return updated;
+    });
+  };
 
-  const handleAddGallery = (item) => setGallery([item, ...gallery]);
-  const handleDeleteGallery = (id) => setGallery(gallery.filter(g => g.id !== id));
+  const handleUpdateStatus = (id, newStatus) => {
+    setOrders(prev => {
+      const updated = prev.map(o => o.id === id ? { ...o, status: newStatus } : o);
+      saveLiveCloudState({ orders: updated, gallery, services, carTypes, reviews, heroContent, siteInfo });
+      return updated;
+    });
+  };
 
-  const handleAddService = (svc) => setServices([...services, svc]);
-  const handleUpdateService = (id, updatedFields) => setServices(services.map(s => s.id === id ? { ...s, ...updatedFields } : s));
-  const handleDeleteService = (id) => setServices(services.filter(s => s.id !== id));
-  const handleResetServices = () => setServices(INITIAL_SERVICES);
+  const handleDeleteOrder = (id) => {
+    setOrders(prev => {
+      const updated = prev.filter(o => o.id !== id);
+      saveLiveCloudState({ orders: updated, gallery, services, carTypes, reviews, heroContent, siteInfo });
+      return updated;
+    });
+  };
 
-  const handleAddCarType = (ct) => setCarTypes([...carTypes, ct]);
-  const handleDeleteCarType = (id) => setCarTypes(carTypes.filter(c => c.id !== id));
-  const handleResetCarTypes = () => setCarTypes(INITIAL_CAR_TYPES);
+  const handleAddGallery = (item) => {
+    setGallery(prev => {
+      const updated = [item, ...prev];
+      saveLiveCloudState({ orders, gallery: updated, services, carTypes, reviews, heroContent, siteInfo });
+      return updated;
+    });
+  };
+
+  const handleDeleteGallery = (id) => {
+    setGallery(prev => {
+      const updated = prev.filter(g => g.id !== id);
+      saveLiveCloudState({ orders, gallery: updated, services, carTypes, reviews, heroContent, siteInfo });
+      return updated;
+    });
+  };
+
+  const handleAddService = (svc) => {
+    setServices(prev => {
+      const updated = [...prev, svc];
+      saveLiveCloudState({ orders, gallery, services: updated, carTypes, reviews, heroContent, siteInfo });
+      return updated;
+    });
+  };
+
+  const handleUpdateService = (id, updatedFields) => {
+    setServices(prev => {
+      const updated = prev.map(s => s.id === id ? { ...s, ...updatedFields } : s);
+      saveLiveCloudState({ orders, gallery, services: updated, carTypes, reviews, heroContent, siteInfo });
+      return updated;
+    });
+  };
+
+  const handleDeleteService = (id) => {
+    setServices(prev => {
+      const updated = prev.filter(s => s.id !== id);
+      saveLiveCloudState({ orders, gallery, services: updated, carTypes, reviews, heroContent, siteInfo });
+      return updated;
+    });
+  };
+
+  const handleResetServices = () => {
+    setServices(INITIAL_SERVICES);
+    saveLiveCloudState({ orders, gallery, services: INITIAL_SERVICES, carTypes, reviews, heroContent, siteInfo });
+  };
+
+  const handleAddCarType = (ct) => {
+    setCarTypes(prev => {
+      const updated = [...prev, ct];
+      saveLiveCloudState({ orders, gallery, services, carTypes: updated, reviews, heroContent, siteInfo });
+      return updated;
+    });
+  };
+
+  const handleDeleteCarType = (id) => {
+    setCarTypes(prev => {
+      const updated = prev.filter(c => c.id !== id);
+      saveLiveCloudState({ orders, gallery, services, carTypes: updated, reviews, heroContent, siteInfo });
+      return updated;
+    });
+  };
+
+  const handleResetCarTypes = () => {
+    setCarTypes(INITIAL_CAR_TYPES);
+    saveLiveCloudState({ orders, gallery, services, carTypes: INITIAL_CAR_TYPES, reviews, heroContent, siteInfo });
+  };
 
   const handleForceSaveCloud = () => {
     saveLiveCloudState({ orders, gallery, services, carTypes, reviews, heroContent, siteInfo });
   };
 
-  const handleAddReview = (rev) => setReviews([rev, ...reviews]);
-  const handleDeleteReview = (id) => setReviews(reviews.filter(r => r.id !== id));
+  const handleAddReview = (rev) => {
+    setReviews(prev => {
+      const updated = [rev, ...prev];
+      saveLiveCloudState({ orders, gallery, services, carTypes, reviews: updated, heroContent, siteInfo });
+      return updated;
+    });
+  };
+
+  const handleDeleteReview = (id) => {
+    setReviews(prev => {
+      const updated = prev.filter(r => r.id !== id);
+      saveLiveCloudState({ orders, gallery, services, carTypes, reviews: updated, heroContent, siteInfo });
+      return updated;
+    });
+  };
 
   const [calculatorDeal, setCalculatorDeal] = useState(null);
 
