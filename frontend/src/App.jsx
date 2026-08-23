@@ -114,82 +114,65 @@ export default function App() {
     });
   };
 
-  const handleAddGallery = (item) => {
-    setGallery(prev => {
-      const updated = [item, ...prev];
-      saveLiveCloudState({ orders, gallery: updated, services, carTypes, reviews, heroContent, siteInfo });
-      return updated;
-    });
+  const handleAddGallery = async (item) => {
+    const updated = [item, ...gallery];
+    setGallery(updated);
+    await saveLiveCloudState({ orders, gallery: updated, services, carTypes, reviews, heroContent, siteInfo });
   };
 
-  const handleDeleteGallery = (id) => {
-    setGallery(prev => {
-      const updated = prev.filter(g => g.id !== id);
-      saveLiveCloudState({ orders, gallery: updated, services, carTypes, reviews, heroContent, siteInfo });
-      return updated;
-    });
+  const handleDeleteGallery = async (id) => {
+    const updated = gallery.filter(g => g.id !== id);
+    setGallery(updated);
+    await saveLiveCloudState({ orders, gallery: updated, services, carTypes, reviews, heroContent, siteInfo });
   };
 
-  const handleAddService = (svc) => {
-    setServices(prev => {
-      const updated = [...prev, svc];
-      saveLiveCloudState({ orders, gallery, services: updated, carTypes, reviews, heroContent, siteInfo });
-      return updated;
-    });
+  const handleAddService = async (svc) => {
+    const updated = [...services, svc];
+    setServices(updated);
+    await saveLiveCloudState({ orders, gallery, services: updated, carTypes, reviews, heroContent, siteInfo });
   };
 
-  const handleUpdateService = (id, updatedFields) => {
-    setServices(prev => {
-      const updated = prev.map(s => s.id === id ? { ...s, ...updatedFields } : s);
-      saveLiveCloudState({ orders, gallery, services: updated, carTypes, reviews, heroContent, siteInfo });
-      return updated;
-    });
+  const handleUpdateService = async (id, updatedFields) => {
+    const updated = services.map(s => s.id === id ? { ...s, ...updatedFields } : s);
+    setServices(updated);
+    await saveLiveCloudState({ orders, gallery, services: updated, carTypes, reviews, heroContent, siteInfo });
   };
 
-  const handleDeleteService = (id) => {
-    setServices(prev => {
-      const updated = prev.filter(s => s.id !== id);
-      saveLiveCloudState({ orders, gallery, services: updated, carTypes, reviews, heroContent, siteInfo });
-      return updated;
-    });
+  const handleDeleteService = async (id) => {
+    const updated = services.filter(s => s.id !== id);
+    setServices(updated);
+    await saveLiveCloudState({ orders, gallery, services: updated, carTypes, reviews, heroContent, siteInfo });
   };
 
-  const handleResetServices = () => {
+  const handleResetServices = async () => {
     setServices(INITIAL_SERVICES);
-    saveLiveCloudState({ orders, gallery, services: INITIAL_SERVICES, carTypes, reviews, heroContent, siteInfo });
+    await saveLiveCloudState({ orders, gallery, services: INITIAL_SERVICES, carTypes, reviews, heroContent, siteInfo });
   };
 
-  const handleAddCarType = (ct) => {
-    setCarTypes(prev => {
-      const updated = [...prev, ct];
-      saveLiveCloudState({ orders, gallery, services, carTypes: updated, reviews, heroContent, siteInfo });
-      return updated;
-    });
+  const handleAddCarType = async (ct) => {
+    const updated = [...carTypes, ct];
+    setCarTypes(updated);
+    await saveLiveCloudState({ orders, gallery, services, carTypes: updated, reviews, heroContent, siteInfo });
   };
 
-  const handleDeleteCarType = (id) => {
-    setCarTypes(prev => {
-      const updated = prev.filter(c => c.id !== id);
-      saveLiveCloudState({ orders, gallery, services, carTypes: updated, reviews, heroContent, siteInfo });
-      return updated;
-    });
+  const handleDeleteCarType = async (id) => {
+    const updated = carTypes.filter(c => c.id !== id);
+    setCarTypes(updated);
+    await saveLiveCloudState({ orders, gallery, services, carTypes: updated, reviews, heroContent, siteInfo });
   };
 
-  const handleResetCarTypes = () => {
+  const handleResetCarTypes = async () => {
     setCarTypes(INITIAL_CAR_TYPES);
-    saveLiveCloudState({ orders, gallery, services, carTypes: INITIAL_CAR_TYPES, reviews, heroContent, siteInfo });
+    await saveLiveCloudState({ orders, gallery, services, carTypes: INITIAL_CAR_TYPES, reviews, heroContent, siteInfo });
   };
 
-  const handleForceSaveCloud = () => {
-    saveLiveCloudState({ orders, gallery, services, carTypes, reviews, heroContent, siteInfo });
+  const handleForceSaveCloud = async () => {
+    await saveLiveCloudState({ orders, gallery, services, carTypes, reviews, heroContent, siteInfo });
   };
 
   const handleAddReview = async (rev) => {
-    let updatedReviews = [];
-    setReviews(prev => {
-      updatedReviews = [rev, ...prev];
-      return updatedReviews;
-    });
+    const updatedReviews = [rev, ...reviews];
+    setReviews(updatedReviews);
 
     await saveLiveCloudState({
       orders,
@@ -211,11 +194,17 @@ export default function App() {
     }
   };
 
-  const handleDeleteReview = (id) => {
-    setReviews(prev => {
-      const updated = prev.filter(r => r.id !== id);
-      saveLiveCloudState({ orders, gallery, services, carTypes, reviews: updated, heroContent, siteInfo });
-      return updated;
+  const handleDeleteReview = async (id) => {
+    const updatedReviews = reviews.filter(r => r.id !== id);
+    setReviews(updatedReviews);
+    await saveLiveCloudState({
+      orders,
+      gallery,
+      services,
+      carTypes,
+      reviews: updatedReviews,
+      heroContent,
+      siteInfo
     });
   };
 
