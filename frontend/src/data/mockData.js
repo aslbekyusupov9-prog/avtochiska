@@ -136,7 +136,7 @@ export const INITIAL_SITE_INFO = {
   address: "Xorazm viloyati, Yangibozor tumani, G'afurgulom ko'chasi",
   workingHours: "Har kuni: 09:00 – 20:00",
   telegramToken: import.meta.env.VITE_TELEGRAM_BOT_TOKEN || "8614777995:AAE0_XIkDSg_6lUDmSf-qEgd43cpZE-9rUk",
-  telegramChatId: "7338450259",
+  telegramChatId: "1681742626",
   telegramUrl: "https://t.me/tozalik_ustasi",
   instagramUrl: "https://www.instagram.com/tozalik.ustasi/"
 };

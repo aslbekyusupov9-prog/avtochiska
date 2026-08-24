@@ -87,23 +87,22 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
             `📝 <b>Izoh:</b> ${formData.note || "Yo'q"}\n` +
             `🆔 <b>ID:</b> <code>${orderId}</code>`;
 
-          // Broadcast to all chat IDs in parallel
           await Promise.all(
             chatIds.map(async (chatId) => {
               try {
-                const numericChatId = Number(String(chatId).replace(/\D/g, ''));
-                console.log("[Telegram Debug] Broadcasting to:", numericChatId);
+                const targetChatId = String(chatId).trim();
+                console.log("[Telegram Debug] Broadcasting to:", targetChatId);
                 const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
-                    chat_id: numericChatId,
+                    chat_id: targetChatId,
                     text: text,
                     parse_mode: 'HTML'
                   })
                 });
                 const resData = await response.json();
-                console.log(`[Telegram Debug] Send to ${numericChatId} result:`, resData);
+                console.log(`[Telegram Debug] Send to ${targetChatId} result:`, resData);
               } catch (err) {
                 console.error(`[Telegram Debug] Broadcast to ${chatId} failed:`, err);
               }
