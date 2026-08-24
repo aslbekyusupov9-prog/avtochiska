@@ -784,7 +784,7 @@ export default function AdminModal({
                 <h4 className="font-display" style={{ fontSize: '22px' }}>TELEGRAM BOT & ALOQA SOZLAMALARI</h4>
                 <div>
                   <label style={labelStyle}>TELEGRAM BOT TOKEN</label>
-                  <input value={siteDraft.telegramToken || ''} onChange={e => setSiteDraft({ ...siteDraft, telegramToken: e.target.value })} style={inputStyle} placeholder="8925592658:AAGYwLX..." />
+                  <input value={siteDraft.telegramToken || ''} onChange={e => setSiteDraft({ ...siteDraft, telegramToken: e.target.value })} style={inputStyle} placeholder="8614777995:AAE0_XI..." />
                 </div>
                 <div>
                   <label style={labelStyle}>TELEGRAM CHAT ID (AVTOMATIK ANIQLANADI)</label>

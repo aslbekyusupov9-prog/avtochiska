@@ -39,7 +39,7 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
     };
 
     // Telegram Bot Push Notification logic
-    const botToken = telegramToken || "8925592658:AAGYwLXwNrqawhwHVJ-L5A70O1i4bXq_CbQ";
+    const botToken = telegramToken || "8614777995:AAE0_XIkDSg_6lUDmSf-qEgd43cpZE-9rUk";
     if (botToken) {
       // Async operation to fetch subscribers from Supabase and broadcast
       (async () => {
