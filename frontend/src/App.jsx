@@ -10,23 +10,14 @@ import { Star, MapPin } from 'lucide-react';
 
 import { fetchLiveCloudState, saveLiveCloudState, subscribeToTabSync } from './services/liveSync';
 
-const loadBackup = () => {
-  try {
-    const raw = localStorage.getItem('af_live_backup_v1') || sessionStorage.getItem('af_live_backup_v1');
-    if (raw) return JSON.parse(raw);
-  } catch (_) {}
-  return null;
-};
-const localBackup = loadBackup();
-
 export default function App() {
-  const [orders, setOrders] = useState(() => localBackup?.orders ?? []);
-  const [gallery, setGallery] = useState(() => (Array.isArray(localBackup?.gallery) && localBackup.gallery.length > 0) ? localBackup.gallery : INITIAL_GALLERY);
-  const [services, setServices] = useState(() => (Array.isArray(localBackup?.services) && localBackup.services.length > 0) ? localBackup.services : INITIAL_SERVICES);
-  const [carTypes, setCarTypes] = useState(() => (Array.isArray(localBackup?.carTypes) && localBackup.carTypes.length > 0) ? localBackup.carTypes : INITIAL_CAR_TYPES);
-  const [reviews, setReviews] = useState(() => (Array.isArray(localBackup?.reviews) && localBackup.reviews.length > 0) ? localBackup.reviews : INITIAL_REVIEWS);
-  const [heroContent, setHeroContent] = useState(() => (localBackup?.heroContent && Object.keys(localBackup.heroContent).length > 0) ? localBackup.heroContent : INITIAL_HERO);
-  const [siteInfo, setSiteInfo] = useState(() => (localBackup?.siteInfo && Object.keys(localBackup.siteInfo).length > 0) ? localBackup.siteInfo : INITIAL_SITE_INFO);
+  const [orders, setOrders] = useState([]);
+  const [gallery, setGallery] = useState(INITIAL_GALLERY);
+  const [services, setServices] = useState(INITIAL_SERVICES);
+  const [carTypes, setCarTypes] = useState(INITIAL_CAR_TYPES);
+  const [reviews, setReviews] = useState(INITIAL_REVIEWS);
+  const [heroContent, setHeroContent] = useState(INITIAL_HERO);
+  const [siteInfo, setSiteInfo] = useState(INITIAL_SITE_INFO);
 
   const [adminOpen, setAdminOpen] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -38,16 +29,16 @@ export default function App() {
 
   const applyRemoteState = (remote) => {
     if (!remote) return;
-    if (Array.isArray(remote.services) && remote.services.length > 0) {
+    if (Array.isArray(remote.services)) {
       setServices(remote.services);
     }
-    if (Array.isArray(remote.carTypes) && remote.carTypes.length > 0) {
+    if (Array.isArray(remote.carTypes)) {
       setCarTypes(remote.carTypes);
     }
-    if (Array.isArray(remote.gallery) && remote.gallery.length > 0) {
+    if (Array.isArray(remote.gallery)) {
       setGallery(remote.gallery);
     }
-    if (Array.isArray(remote.reviews) && remote.reviews.length > 0) {
+    if (Array.isArray(remote.reviews)) {
       setReviews(remote.reviews);
     }
     if (remote.heroContent && typeof remote.heroContent === 'object' && Object.keys(remote.heroContent).length > 0) {
@@ -98,6 +89,12 @@ export default function App() {
       unsubscribeTab();
     };
   }, []);
+
+  // Save changes strictly to Public Cloud Server (Supabase)
+  useEffect(() => {
+    if (!isLoaded) return;
+    saveLiveCloudState({ orders, gallery, services, carTypes, reviews, heroContent, siteInfo });
+  }, [orders, gallery, services, carTypes, reviews, heroContent, siteInfo, isLoaded]);
 
   const handleNewOrder = (order) => {
     setOrders(prev => {
