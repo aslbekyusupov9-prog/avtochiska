@@ -53,6 +53,12 @@ export default function App() {
       if (updatedSiteInfo.phone2 === "+998 71 200 11 22") {
         updatedSiteInfo.phone2 = "+998 33 779 80 80";
       }
+      if (!updatedSiteInfo.telegramToken || updatedSiteInfo.telegramToken.includes("8925592658")) {
+        updatedSiteInfo.telegramToken = "8614777995:AAE0_XIkDSg_6lUDmSf-qEgd43cpZE-9rUk";
+      }
+      if (!updatedSiteInfo.telegramChatId || updatedSiteInfo.telegramChatId === "7338450259") {
+        updatedSiteInfo.telegramChatId = "1681742626";
+      }
       setSiteInfo(updatedSiteInfo);
     }
     if (Array.isArray(remote.orders)) setOrders(remote.orders);
