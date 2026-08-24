@@ -1,23 +1,27 @@
 // ============================================================
-// liveSync.js — Supabase Direct Sync
+// liveSync.js — Bulletproof Supabase Direct & Realtime Sync
 // ============================================================
 import { supabase } from '../lib/supabase';
 
 const TABLE = 'site_data';
 const ROW_ID = 'main';
 
-// BroadcastChannel — bir browserda tab sync uchun (realtime fallback)
 const syncChannel =
   typeof BroadcastChannel !== 'undefined'
     ? new BroadcastChannel('tozalik_ustasi_channel')
     : null;
 
 /**
- * Supabase'dan barcha site ma'lumotlarini o'qish (direct query).
- * @returns {Promise<Object|null>}
+ * Supabase'dan va lokal zaxiradan site ma'lumotlarini o'qish.
  */
 export async function fetchLiveCloudState() {
-  if (!supabase) return null;
+  let localBackup = null;
+  try {
+    const raw = localStorage.getItem('af_live_backup_v1') || sessionStorage.getItem('af_live_backup_v1');
+    if (raw) localBackup = JSON.parse(raw);
+  } catch (_) {}
+
+  if (!supabase) return localBackup;
 
   try {
     const { data, error } = await supabase
@@ -28,31 +32,40 @@ export async function fetchLiveCloudState() {
 
     if (error || !data) {
       if (error) console.error('[liveSync] fetchLiveCloudState error:', error.message);
-      return null;
+      return localBackup;
     }
 
     const fetchedCarTypes = (Array.isArray(data.car_types) && data.car_types.length > 0)
       ? data.car_types
-      : (Array.isArray(data.site_info?.carTypes) ? data.site_info.carTypes : []);
+      : (Array.isArray(data.site_info?.carTypes) ? data.site_info.carTypes : (localBackup?.carTypes || []));
 
-    return {
-      orders: data.orders ?? [],
-      gallery: data.gallery ?? [],
-      services: Array.isArray(data.services) ? data.services : [],
-      carTypes: Array.isArray(fetchedCarTypes) ? fetchedCarTypes : [],
-      reviews: data.reviews ?? [],
-      heroContent: data.hero_content ?? {},
-      siteInfo: data.site_info ?? {},
+    const fetchedServices = (Array.isArray(data.services) && data.services.length > 0)
+      ? data.services
+      : (localBackup?.services || []);
+
+    const result = {
+      orders: (Array.isArray(data.orders) && data.orders.length > 0) ? data.orders : (localBackup?.orders || []),
+      gallery: (Array.isArray(data.gallery) && data.gallery.length > 0) ? data.gallery : (localBackup?.gallery || []),
+      services: fetchedServices,
+      carTypes: fetchedCarTypes,
+      reviews: (Array.isArray(data.reviews) && data.reviews.length > 0) ? data.reviews : (localBackup?.reviews || []),
+      heroContent: (data.hero_content && Object.keys(data.hero_content).length > 0) ? data.hero_content : (localBackup?.heroContent || {}),
+      siteInfo: (data.site_info && Object.keys(data.site_info).length > 0) ? data.site_info : (localBackup?.siteInfo || {}),
     };
+
+    try {
+      localStorage.setItem('af_live_backup_v1', JSON.stringify(result));
+    } catch (_) {}
+
+    return result;
   } catch (err) {
     console.error('[liveSync] fetchLiveCloudState exception:', err);
-    return null;
+    return localBackup;
   }
 }
 
 /**
- * Supabase'ga site ma'lumotlarini saqlash (direct upsert to Supabase).
- * @param {Object} data
+ * Supabase'ga va lokal saqlash (dual-sync with schema fallback).
  */
 export async function saveLiveCloudState(data) {
   if (syncChannel) {
@@ -61,10 +74,12 @@ export async function saveLiveCloudState(data) {
     } catch (_) {}
   }
 
-  if (!supabase) {
-    console.error('[liveSync] Supabase klienti yo\'q.');
-    return;
-  }
+  try {
+    localStorage.setItem('af_live_backup_v1', JSON.stringify(data));
+    sessionStorage.setItem('af_live_backup_v1', JSON.stringify(data));
+  } catch (_) {}
+
+  if (!supabase) return;
 
   const siteInfoWithCarTypes = {
     ...(data.siteInfo || {}),
@@ -82,12 +97,28 @@ export async function saveLiveCloudState(data) {
     site_info: siteInfoWithCarTypes,
   };
 
+  const payloadFallback = {
+    id: ROW_ID,
+    orders: data.orders ?? [],
+    gallery: data.gallery ?? [],
+    services: data.services ?? [],
+    reviews: data.reviews ?? [],
+    hero_content: data.heroContent ?? {},
+    site_info: siteInfoWithCarTypes,
+  };
+
   try {
     const { error } = await supabase.from(TABLE).upsert(payloadPrimary, { onConflict: 'id' });
     if (error) {
-      console.error('[liveSync] Supabase saqlashda xatolik:', error.message);
+      console.warn('[liveSync] Primary schema error, trying fallback:', error.message);
+      const { error: fallbackErr } = await supabase.from(TABLE).upsert(payloadFallback, { onConflict: 'id' });
+      if (fallbackErr) {
+        console.error('[liveSync] Supabase saqlashda xatolik:', fallbackErr.message);
+      } else {
+        console.log('[liveSync] Supabase fallback orqali saqlandi ✓');
+      }
     } else {
-      console.log("[liveSync] Supabase cloud-ga to'g'ridan-to'g'ri saqlandi ✓");
+      console.log('[liveSync] Supabase cloud-ga saqlandi ✓');
     }
   } catch (err) {
     console.error('[liveSync] Supabase save exception:', err);
@@ -95,14 +126,11 @@ export async function saveLiveCloudState(data) {
 }
 
 /**
- * Supabase Realtime + BroadcastChannel orqali o'zgarishlarni kuzatish.
- * @param {Function} callback
- * @returns {Function} unsubscribe
+ * Supabase Realtime + BroadcastChannel.
  */
 export function subscribeToTabSync(callback) {
   const unsubscribes = [];
 
-  // 1. BroadcastChannel (bir xil browser ichida)
   if (syncChannel) {
     const handler = (event) => {
       if (event.data && event.data.type === 'SYNC_STATE') {
@@ -113,7 +141,6 @@ export function subscribeToTabSync(callback) {
     unsubscribes.push(() => syncChannel.removeEventListener('message', handler));
   }
 
-  // 2. Supabase Realtime (boshqa qurilmalar uchun)
   if (supabase) {
     const channelName = `site_data_realtime_${Date.now()}`;
     const channel = supabase
