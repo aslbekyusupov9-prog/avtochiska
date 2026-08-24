@@ -24,7 +24,10 @@ export default function ServicesAndCalculator({ services = INITIAL_SERVICES, car
   // Filter services specific to selected car section
   const availableServices = services.filter(svc => {
     if (selectedCar?.id === 'all_cars') return true;
-    return !svc.carTypeId || svc.carTypeId === 'all' || svc.carTypeId === selectedCar?.id;
+    const rawVal = svc.carTypeIds || svc.carTypeId || 'all';
+    const ids = Array.isArray(rawVal) ? rawVal : [rawVal];
+    if (ids.includes('all') || ids.includes('all_cars') || ids.length === 0) return true;
+    return ids.includes(selectedCar?.id);
   });
 
   const [selectedServices, setSelectedServices] = useState([]);

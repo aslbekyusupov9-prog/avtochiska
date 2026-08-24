@@ -1,6 +1,169 @@
 import React, { useState } from 'react';
 import { X, LayoutDashboard, ShoppingBag, Image as ImageIcon, Star, Settings, Plus, Trash2, CheckCircle2, Shield, Wrench, Car } from 'lucide-react';
 
+function CarTypeMultiSelect({ value, onChange, carTypes = [] }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = React.useRef(null);
+
+  let selected = [];
+  if (Array.isArray(value)) {
+    selected = value;
+  } else if (value && value !== 'all') {
+    selected = [value];
+  } else {
+    selected = ['all'];
+  }
+
+  const isAll = selected.includes('all') || selected.length === 0;
+
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleToggle = (id) => {
+    if (id === 'all') {
+      onChange(['all']);
+      return;
+    }
+
+    let newSelected = selected.filter(item => item !== 'all');
+
+    if (newSelected.includes(id)) {
+      newSelected = newSelected.filter(item => item !== id);
+    } else {
+      newSelected.push(id);
+    }
+
+    if (newSelected.length === 0 || newSelected.length === carTypes.length) {
+      onChange(['all']);
+    } else {
+      onChange(newSelected);
+    }
+  };
+
+  let labelText = "📌 Barcha turlar uchun";
+  if (!isAll) {
+    if (selected.length === 1) {
+      const found = carTypes.find(ct => ct.id === selected[0]);
+      labelText = found ? `🚗 Faqat ${found.name} uchun` : `🚗 1 ta tur tanlangan`;
+    } else {
+      const names = selected
+        .map(id => carTypes.find(ct => ct.id === id)?.name)
+        .filter(Boolean)
+        .join(', ');
+      labelText = `🚗 ${selected.length} ta tur: ${names}`;
+    }
+  }
+
+  return (
+    <div ref={dropdownRef} style={{ position: 'relative', display: 'inline-block', width: '100%', maxWidth: '280px' }}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          width: '100%',
+          padding: '10px 14px',
+          borderRadius: '10px',
+          background: '#12141a',
+          border: '1px solid var(--lime-glow)',
+          color: isAll ? 'var(--ivory)' : 'var(--lime)',
+          fontSize: '13px',
+          cursor: 'pointer',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '8px',
+          textAlign: 'left'
+        }}>
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {labelText}
+        </span>
+        <span style={{ fontSize: '10px', opacity: 0.7 }}>{isOpen ? '▲' : '▼'}</span>
+      </button>
+
+      {isOpen && (
+        <div style={{
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          right: 0,
+          marginTop: '6px',
+          background: '#171922',
+          border: '1px solid var(--lime-glow)',
+          borderRadius: '12px',
+          padding: '8px',
+          zIndex: 100,
+          boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+          maxHeight: '260px',
+          overflowY: 'auto'
+        }}>
+          <div
+            onClick={(e) => { e.stopPropagation(); handleToggle('all'); }}
+            style={{
+              padding: '8px 12px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              fontSize: '13px',
+              background: isAll ? 'rgba(200,255,61,0.15)' : 'transparent',
+              color: isAll ? 'var(--lime)' : 'var(--ivory)',
+              marginBottom: '4px',
+              fontWeight: isAll ? '600' : 'normal'
+            }}>
+            <input
+              type="checkbox"
+              checked={isAll}
+              onChange={() => {}}
+              style={{ accentColor: 'var(--lime)', cursor: 'pointer' }}
+            />
+            <span>📌 Barcha turlar uchun</span>
+          </div>
+
+          <div style={{ height: '1px', background: 'var(--glass-border)', margin: '4px 0' }} />
+
+          {carTypes.map(ct => {
+            const isChecked = !isAll && selected.includes(ct.id);
+            return (
+              <div
+                key={ct.id}
+                onClick={(e) => { e.stopPropagation(); handleToggle(ct.id); }}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '13px',
+                  background: isChecked ? 'rgba(200,255,61,0.15)' : 'transparent',
+                  color: isChecked ? 'var(--lime)' : 'var(--ivory)',
+                  marginBottom: '2px',
+                  fontWeight: isChecked ? '600' : 'normal'
+                }}>
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={() => {}}
+                  style={{ accentColor: 'var(--lime)', cursor: 'pointer' }}
+                />
+                <span>🚗 Faqat {ct.name} uchun</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AdminModal({
   isOpen,
   onClose,
@@ -95,14 +258,16 @@ export default function AdminModal({
     e.preventDefault();
     if (!newSvc.name || !newSvc.basePrice) return;
     const num = newSvc.number || String(services.length + 1).padStart(2, '0');
+    const selectedTypes = newSvc.carTypeIds || newSvc.carTypeId || ['all'];
     onAddService({
       ...newSvc,
       id: 's_' + Date.now(),
       number: num,
       basePrice: Number(newSvc.basePrice),
-      carTypeId: newSvc.carTypeId || 'all'
+      carTypeId: selectedTypes,
+      carTypeIds: selectedTypes
     });
-    setNewSvc({ number: String(services.length + 2).padStart(2, '0'), name: '', description: '', basePrice: 200000, tag: 'Yangi', carTypeId: 'all' });
+    setNewSvc({ number: String(services.length + 2).padStart(2, '0'), name: '', description: '', basePrice: 200000, tag: 'Yangi', carTypeId: ['all'], carTypeIds: ['all'] });
   };
 
   const handleCreateReview = (e) => {
@@ -541,15 +706,11 @@ export default function AdminModal({
                   <input placeholder="Nomer (Masalan: 05)" value={newSvc.number} onChange={e => setNewSvc({ ...newSvc, number: e.target.value })} style={inputStyle} />
                   <input placeholder="Xizmat nomi" value={newSvc.name} onChange={e => setNewSvc({ ...newSvc, name: e.target.value })} style={inputStyle} />
                   <input placeholder="Boshlang'ich narx (so'm)" type="number" value={newSvc.basePrice} onChange={e => setNewSvc({ ...newSvc, basePrice: e.target.value })} style={inputStyle} />
-                  <select
-                    value={newSvc.carTypeId || 'all'}
-                    onChange={e => setNewSvc({ ...newSvc, carTypeId: e.target.value })}
-                    style={{ ...inputStyle, background: '#12141a' }}>
-                    <option value="all">📌 Barcha mashina turlari uchun</option>
-                    {carTypes.map(ct => (
-                      <option key={ct.id} value={ct.id}>🚗 Faqat {ct.name} uchun</option>
-                    ))}
-                  </select>
+                  <CarTypeMultiSelect
+                    value={newSvc.carTypeIds || newSvc.carTypeId || 'all'}
+                    carTypes={carTypes}
+                    onChange={(val) => setNewSvc({ ...newSvc, carTypeId: val, carTypeIds: val })}
+                  />
                   <input placeholder="Tavsif" value={newSvc.description} onChange={e => setNewSvc({ ...newSvc, description: e.target.value })} style={{ ...inputStyle, gridColumn: '1/-1' }} />
                   <button type="submit" className="btn-primary" style={{ padding: '10px', fontSize: '11px', gridColumn: '1/-1' }}>
                     <Plus size={14} /> Xizmatni qo'shish
@@ -580,20 +741,16 @@ export default function AdminModal({
                           <p style={{ color: 'var(--lime)', fontSize: '14px', margin: '4px 0' }}>{Number(svc.basePrice).toLocaleString()} so'm</p>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          <select
-                            value={svc.carTypeId || 'all'}
-                            onChange={(e) => {
+                          <CarTypeMultiSelect
+                            value={svc.carTypeIds || svc.carTypeId || 'all'}
+                            carTypes={carTypes}
+                            onChange={(val) => {
                               if (onUpdateService) {
-                                onUpdateService(svc.id, { carTypeId: e.target.value });
+                                onUpdateService(svc.id, { carTypeId: val, carTypeIds: val });
                                 setTimeout(() => handleSaveAll(), 100);
                               }
                             }}
-                            style={{ ...inputStyle, width: 'auto', padding: '6px 12px', background: '#12141a', color: 'var(--lime)', border: '1px solid var(--lime-glow)' }}>
-                            <option value="all">📌 Barcha turlar uchun</option>
-                            {carTypes.map(ct => (
-                              <option key={ct.id} value={ct.id}>🚗 Faqat {ct.name} uchun</option>
-                            ))}
-                          </select>
+                          />
                           <button 
                             type="button"
                             onClick={(e) => {
