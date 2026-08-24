@@ -1,29 +1,23 @@
 // ============================================================
-// liveSync.js — Supabase Realtime + BroadcastChannel fallback
+// liveSync.js — Supabase Direct Sync
 // ============================================================
 import { supabase } from '../lib/supabase';
 
 const TABLE = 'site_data';
 const ROW_ID = 'main';
 
-// BroadcastChannel — bir browserda tab sync uchun (fallback)
+// BroadcastChannel — bir browserda tab sync uchun (realtime fallback)
 const syncChannel =
   typeof BroadcastChannel !== 'undefined'
     ? new BroadcastChannel('tozalik_ustasi_channel')
     : null;
 
 /**
- * Supabase'dan barcha site ma'lumotlarini olish.
+ * Supabase'dan barcha site ma'lumotlarini o'qish (direct query).
  * @returns {Promise<Object|null>}
  */
 export async function fetchLiveCloudState() {
-  let backup = null;
-  try {
-    const rawBackup = localStorage.getItem('af_live_backup_v1') || sessionStorage.getItem('af_live_backup_v1');
-    if (rawBackup) backup = JSON.parse(rawBackup);
-  } catch (_) {}
-
-  if (!supabase) return backup;
+  if (!supabase) return null;
 
   try {
     const { data, error } = await supabase
@@ -34,48 +28,43 @@ export async function fetchLiveCloudState() {
 
     if (error || !data) {
       if (error) console.error('[liveSync] fetchLiveCloudState error:', error.message);
-      return backup;
+      return null;
     }
 
     const fetchedCarTypes = (Array.isArray(data.car_types) && data.car_types.length > 0)
       ? data.car_types
       : (Array.isArray(data.site_info?.carTypes) ? data.site_info.carTypes : []);
 
-    const result = {
-      orders: data.orders ?? backup?.orders ?? [],
-      gallery: data.gallery ?? backup?.gallery ?? [],
-      services: Array.isArray(data.services) ? data.services : (backup?.services ?? []),
-      carTypes: Array.isArray(fetchedCarTypes) ? fetchedCarTypes : (backup?.carTypes ?? []),
-      reviews: data.reviews ?? backup?.reviews ?? [],
-      heroContent: data.hero_content ?? backup?.heroContent ?? {},
-      siteInfo: data.site_info ?? backup?.siteInfo ?? {},
+    return {
+      orders: data.orders ?? [],
+      gallery: data.gallery ?? [],
+      services: Array.isArray(data.services) ? data.services : [],
+      carTypes: Array.isArray(fetchedCarTypes) ? fetchedCarTypes : [],
+      reviews: data.reviews ?? [],
+      heroContent: data.hero_content ?? {},
+      siteInfo: data.site_info ?? {},
     };
-
-    return result;
   } catch (err) {
     console.error('[liveSync] fetchLiveCloudState exception:', err);
-    return backup;
+    return null;
   }
 }
 
 /**
- * Supabase'ga site ma'lumotlarini saqlash (upsert).
+ * Supabase'ga site ma'lumotlarini saqlash (direct upsert to Supabase).
  * @param {Object} data
  */
 export async function saveLiveCloudState(data) {
-  // Avval tab'larni BroadcastChannel va LocalStorage/SessionStorage orqali xabardor qilish
   if (syncChannel) {
     try {
       syncChannel.postMessage({ type: 'SYNC_STATE', payload: data });
     } catch (_) {}
   }
 
-  try {
-    localStorage.setItem('af_live_backup_v1', JSON.stringify(data));
-    sessionStorage.setItem('af_live_backup_v1', JSON.stringify(data));
-  } catch (_) {}
-
-  if (!supabase) return;
+  if (!supabase) {
+    console.error('[liveSync] Supabase klienti yo\'q.');
+    return;
+  }
 
   const siteInfoWithCarTypes = {
     ...(data.siteInfo || {}),
@@ -93,33 +82,20 @@ export async function saveLiveCloudState(data) {
     site_info: siteInfoWithCarTypes,
   };
 
-  const payloadFallback = {
-    id: ROW_ID,
-    orders: data.orders ?? [],
-    gallery: data.gallery ?? [],
-    services: data.services ?? [],
-    reviews: data.reviews ?? [],
-    hero_content: data.heroContent ?? {},
-    site_info: siteInfoWithCarTypes,
-  };
-
   try {
     const { error } = await supabase.from(TABLE).upsert(payloadPrimary, { onConflict: 'id' });
     if (error) {
-      console.warn('[liveSync] Retrying with fallback schema due to:', error.message);
-      const { error: fallbackErr } = await supabase.from(TABLE).upsert(payloadFallback, { onConflict: 'id' });
-      if (fallbackErr) {
-        console.error('[liveSync] saveLiveCloudState fallback error:', fallbackErr.message);
-      }
+      console.error('[liveSync] Supabase saqlashda xatolik:', error.message);
+    } else {
+      console.log("[liveSync] Supabase cloud-ga to'g'ridan-to'g'ri saqlandi ✓");
     }
   } catch (err) {
-    console.error('[liveSync] saveLiveCloudState exception:', err);
+    console.error('[liveSync] Supabase save exception:', err);
   }
 }
 
 /**
  * Supabase Realtime + BroadcastChannel orqali o'zgarishlarni kuzatish.
- * Boshqa qurilma/tab ma'lumot o'zgartirganda callback chaqiriladi.
  * @param {Function} callback
  * @returns {Function} unsubscribe
  */
