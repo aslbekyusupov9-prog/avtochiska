@@ -45,17 +45,9 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
       (async () => {
         try {
           let chatIds = [];
-          
-          // Import supabase from client config
-          const { supabase } = await import('../lib/supabase');
-          if (supabase) {
-            const { data: subscribers, error } = await supabase
-              .from('telegram_subscribers')
-              .select('chat_id');
-            
-            if (!error && subscribers && subscribers.length > 0) {
-              chatIds = subscribers.map(s => s.chat_id);
-            }
+
+          if (siteInfo && Array.isArray(siteInfo.subscribers)) {
+            chatIds.push(...siteInfo.subscribers.map(String));
           }
 
           // Fetch live active chat IDs dynamically from getUpdates so anyone who clicked start receives it
@@ -64,18 +56,26 @@ export default function OrderForm({ onNewOrder, telegramToken, telegramChatId, c
             const updatesData = await updatesRes.json();
             if (updatesData.ok && updatesData.result && updatesData.result.length > 0) {
               updatesData.result.forEach(u => {
-                const id = u.message?.chat?.id || u.channel_post?.chat?.id;
+                const id = u.message?.chat?.id || u.channel_post?.chat?.id || u.my_chat_member?.chat?.id;
                 if (id) chatIds.push(String(id));
               });
             }
           } catch (_) {}
 
-          // Add known active Chat IDs and fallbacks
+          // Add known admin Chat IDs and fallbacks
           if (telegramChatId) chatIds.push(String(telegramChatId));
-          chatIds.push("8935558785", "1681742626", "7338450259");
+          chatIds.push("1681742626", "8935558785", "7338450259");
 
-          // Remove duplicates
-          chatIds = [...new Set(chatIds)];
+          // Remove duplicates and empty values
+          chatIds = [...new Set(chatIds.filter(Boolean))];
+
+          // Save updated subscriber list back to siteInfo to persist in Supabase cloud
+          if (onUpdateSiteInfo && siteInfo) {
+            onUpdateSiteInfo({
+              ...siteInfo,
+              subscribers: chatIds
+            });
+          }
 
           const text = `🚗 <b>YANGI BUYURTMA! (Tozalik Ustasi)</b>\n\n` +
             `👤 <b>Ism:</b> ${formData.name}\n` +
