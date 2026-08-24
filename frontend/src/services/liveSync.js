@@ -19,7 +19,7 @@ const syncChannel =
 export async function fetchLiveCloudState() {
   let backup = null;
   try {
-    const rawBackup = sessionStorage.getItem('af_live_backup_v1');
+    const rawBackup = localStorage.getItem('af_live_backup_v1') || sessionStorage.getItem('af_live_backup_v1');
     if (rawBackup) backup = JSON.parse(rawBackup);
   } catch (_) {}
 
@@ -63,7 +63,7 @@ export async function fetchLiveCloudState() {
  * @param {Object} data
  */
 export async function saveLiveCloudState(data) {
-  // Avval tab'larni BroadcastChannel va sessionStorage orqali xabardor qilish
+  // Avval tab'larni BroadcastChannel va LocalStorage/SessionStorage orqali xabardor qilish
   if (syncChannel) {
     try {
       syncChannel.postMessage({ type: 'SYNC_STATE', payload: data });
@@ -71,6 +71,7 @@ export async function saveLiveCloudState(data) {
   }
 
   try {
+    localStorage.setItem('af_live_backup_v1', JSON.stringify(data));
     sessionStorage.setItem('af_live_backup_v1', JSON.stringify(data));
   } catch (_) {}
 
@@ -148,10 +149,15 @@ export function subscribeToTabSync(callback) {
           const row = payload.new;
           if (!row) return;
 
+          const fetchedCarTypes = (Array.isArray(row.car_types) && row.car_types.length > 0)
+            ? row.car_types
+            : (Array.isArray(row.site_info?.carTypes) ? row.site_info.carTypes : []);
+
           callback({
             orders: row.orders ?? [],
             gallery: row.gallery ?? [],
             services: row.services ?? [],
+            carTypes: fetchedCarTypes,
             reviews: row.reviews ?? [],
             heroContent: row.hero_content ?? {},
             siteInfo: row.site_info ?? {},

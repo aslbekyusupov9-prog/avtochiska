@@ -268,6 +268,7 @@ export default function AdminModal({
       carTypeIds: selectedTypes
     });
     setNewSvc({ number: String(services.length + 2).padStart(2, '0'), name: '', description: '', basePrice: 200000, tag: 'Yangi', carTypeId: ['all'], carTypeIds: ['all'] });
+    setTimeout(() => handleSaveAll(), 100);
   };
 
   const handleCreateReview = (e) => {
@@ -735,12 +736,47 @@ export default function AdminModal({
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {services.map(svc => {
                     return (
-                      <div key={svc.id} style={{ padding: '16px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-                        <div>
-                          <h5 style={{ fontSize: '16px' }}>{svc.number}. {svc.name}</h5>
-                          <p style={{ color: 'var(--lime)', fontSize: '14px', margin: '4px 0' }}>{Number(svc.basePrice).toLocaleString()} so'm</p>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div key={svc.id} style={{ padding: '16px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <input
+                            type="text"
+                            value={svc.number || ''}
+                            onChange={(e) => {
+                              if (onUpdateService) {
+                                onUpdateService(svc.id, { number: e.target.value });
+                                setTimeout(() => handleSaveAll(), 200);
+                              }
+                            }}
+                            placeholder="№"
+                            style={{ ...inputStyle, width: '60px', padding: '8px 10px', textAlign: 'center' }}
+                          />
+                          <input
+                            type="text"
+                            value={svc.name || ''}
+                            onChange={(e) => {
+                              if (onUpdateService) {
+                                onUpdateService(svc.id, { name: e.target.value });
+                                setTimeout(() => handleSaveAll(), 200);
+                              }
+                            }}
+                            placeholder="Xizmat nomi"
+                            style={{ ...inputStyle, flex: 1, minWidth: '180px', padding: '8px 12px', fontWeight: 'bold' }}
+                          />
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <input
+                              type="number"
+                              value={svc.basePrice ?? ''}
+                              onChange={(e) => {
+                                if (onUpdateService) {
+                                  onUpdateService(svc.id, { basePrice: Number(e.target.value) });
+                                  setTimeout(() => handleSaveAll(), 200);
+                                }
+                              }}
+                              placeholder="Narxi"
+                              style={{ ...inputStyle, width: '130px', padding: '8px 12px', color: 'var(--lime)', fontWeight: 'bold' }}
+                            />
+                            <span style={{ fontSize: '12px', color: 'var(--grey)' }}>so'm</span>
+                          </div>
                           <CarTypeMultiSelect
                             value={svc.carTypeIds || svc.carTypeId || 'all'}
                             carTypes={carTypes}
