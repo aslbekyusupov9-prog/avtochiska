@@ -744,7 +744,6 @@ export default function AdminModal({
                             onChange={(e) => {
                               if (onUpdateService) {
                                 onUpdateService(svc.id, { number: e.target.value });
-                                setTimeout(() => handleSaveAll(), 200);
                               }
                             }}
                             placeholder="№"
@@ -756,7 +755,6 @@ export default function AdminModal({
                             onChange={(e) => {
                               if (onUpdateService) {
                                 onUpdateService(svc.id, { name: e.target.value });
-                                setTimeout(() => handleSaveAll(), 200);
                               }
                             }}
                             placeholder="Xizmat nomi"
@@ -769,7 +767,6 @@ export default function AdminModal({
                               onChange={(e) => {
                                 if (onUpdateService) {
                                   onUpdateService(svc.id, { basePrice: Number(e.target.value) });
-                                  setTimeout(() => handleSaveAll(), 200);
                                 }
                               }}
                               placeholder="Narxi"
@@ -783,7 +780,6 @@ export default function AdminModal({
                             onChange={(val) => {
                               if (onUpdateService) {
                                 onUpdateService(svc.id, { carTypeId: val, carTypeIds: val });
-                                setTimeout(() => handleSaveAll(), 100);
                               }
                             }}
                           />
@@ -793,7 +789,6 @@ export default function AdminModal({
                               e.preventDefault();
                               e.stopPropagation();
                               onDeleteService(svc.id);
-                              setTimeout(() => handleSaveAll(), 100);
                             }} 
                             style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(255,110,110,0.15)', border: '1px solid #ff6e6e', color: '#ff9e9e', cursor: 'pointer' }}>
                             <Trash2 size={16} />
