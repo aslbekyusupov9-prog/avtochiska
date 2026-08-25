@@ -59,6 +59,7 @@ export default function App() {
       if (!updatedSiteInfo.telegramChatId || updatedSiteInfo.telegramChatId === "7338450259") {
         updatedSiteInfo.telegramChatId = "1681742626";
       }
+      updatedSiteInfo.address = "Xorazm viloyati, Yangibozor tumani, G'afurgulom ko'chasi, 18-uy";
       setSiteInfo(updatedSiteInfo);
     }
     if (Array.isArray(remote.orders)) setOrders(remote.orders);
