@@ -133,7 +133,7 @@ export const INITIAL_HERO = {
 export const INITIAL_SITE_INFO = {
   phone1: "+998 33 779 80 80",
   phone2: "+998 33 779 80 80",
-  address: "Xorazm viloyati, Yangibozor tumani, G'afurgulom ko'chasi",
+  address: "Xorazm viloyati, Yangibozor tumani, G'afurgulom ko'chasi, 18-uy",
   workingHours: "Har kuni: 09:00 – 20:00",
   telegramToken: import.meta.env.VITE_TELEGRAM_BOT_TOKEN || "8614777995:AAE0_XIkDSg_6lUDmSf-qEgd43cpZE-9rUk",
   telegramChatId: "1681742626",
